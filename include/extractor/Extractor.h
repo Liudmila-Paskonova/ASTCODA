@@ -12,24 +12,25 @@
 #include <ranges>
 #include <concepts>
 #include <chrono>
-#include <mutex>
 #include <unordered_map>
 #include <format>
 
 namespace extractor
 {
-/// lock
-std::mutex mut;
 
-// Function that extracts all triplets (<token><path><token>)
-// >> file - source file name
-// >> db - path to metadata.db
+/// Function that extracts all path-tokens
+/// @param file - path to source file
+/// @param params - struct with parameters
+/// @param tempDir - directory to store temporary files
 template <typename Parameters>
 void
 extract(const std::filesystem::path &file, const Parameters &params, const std::filesystem::path &tempDir)
 {
-    treesitter::Tree t(file, params.lang, params.traversal, params.token, params.split);
+    treesitter::Tree t(file, params.lang, params.traversal, params.token, params.split, params.minLen);
     auto res = t.process();
+    if (res.size() > params.maxSize) {
+        return;
+    }
     std::string line = file.filename().stem();
     for (const auto &v : res) {
         line += " " + v;
@@ -54,15 +55,14 @@ extract(const std::filesystem::path &file, const Parameters &params, const std::
     tempVocab.close();
 }
 
+/// Class that extracts path-tokens from files concurrently
+/// @brief - Uses threadpool
 class Extractor
 {
 
   public:
-    // Function that runs extractor
-    // >> dir - path to directory or file
-    // >> batchSize - size of batch == number of files one thread is going to process
-    // >> numThreads - number of threads available
-
+    /// Function that runs extractor
+    /// @param params - struct with parameters
     template <typename Parameters>
     void
     run(const Parameters &params)
@@ -94,7 +94,8 @@ class Extractor
         }
 
         // unite all files with path-contexts into one
-        std::ofstream outFile(tokensDir / (params.traversal + "|" + params.token + "|" + params.split + "_tokens.txt"));
+        std::ofstream outFile(tokensDir /
+                              (params.traversal + "__" + params.token + "__" + params.split + "__tokens.txt"));
         for (auto const &dir_entry : std::filesystem::directory_iterator{tokensDir / "temp" / "tokens"}) {
             std::ifstream f(dir_entry.path());
             outFile << f.rdbuf();
@@ -133,7 +134,7 @@ class Extractor
             f.close();
         }
         std::ofstream outVocab(tokensDir /
-                               (params.traversal + "|" + params.token + "|" + params.split + "_mapping.txt"));
+                               (params.traversal + "__" + params.token + "__" + params.split + "__mapping.txt"));
         outVocab << globalVocab.size() << "\n";
         for (auto &[hash, tok] : globalVocab) {
             outVocab << "___[BOS]___ " << hash << " " << tok << "\n";

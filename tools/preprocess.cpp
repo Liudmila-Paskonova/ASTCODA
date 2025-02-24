@@ -49,11 +49,11 @@ struct Parameters : public argparser::Arguments {
     {
         using namespace argparser;
 
-        addParam<"-nprobs", "--number_of_problems">(numProbs, NaturalRangeArgument<>(UINT32_MAX, {0, UINT32_MAX}));
-        addParam<"-nsubs", "--number_of_submissions">(numSubs, NaturalRangeArgument<>(UINT32_MAX, {0, UINT32_MAX}));
-        addParam<"-split", "--split_train_val">(split, NaturalRangeArgument<>(75, {0, 100}));
-        addParam<"-datadir", "--dataset_directory">(dataDir, DirectoryArgument<std::string>("/home"));
-        addParam<"-outdir", "--train_split_directory">(outDir, DirectoryArgument<std::string>("/home"));
+        addParam<"nprobs">(numProbs, NaturalRangeArgument<>(UINT32_MAX, {0, UINT32_MAX}));
+        addParam<"nsubs">(numSubs, NaturalRangeArgument<>(UINT32_MAX, {0, UINT32_MAX}));
+        addParam<"split">(split, NaturalRangeArgument<>(75, {0, 100}));
+        addParam<"datadir">(dataDir, DirectoryArgument<std::string>("/home"));
+        addParam<"outdir">(outDir, DirectoryArgument<std::string>("/home"));
     }
 };
 

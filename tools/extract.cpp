@@ -42,6 +42,8 @@ struct Parameters : public argparser::Arguments {
     // size_t maxLen;   //
     // size_t maxWidth; //
     size_t numThreads;
+    size_t minLen;
+    size_t maxSize;
     // size_t batch;       //
     // bool exportVectors; //
     std::string lang;
@@ -59,23 +61,24 @@ struct Parameters : public argparser::Arguments {
         using namespace argparser;
         // addParam<"-maxlen", "--max_path_length">(maxLen, NaturalRangeArgument<>(1, {1, 20}));
         // addParam<"-maxwidth", "--max_path_width">(maxWidth, NaturalRangeArgument<>(1, {1, 20}));
-        addParam<"-threads", "--num_threads">(numThreads, NaturalRangeArgument<>(1, {1, 64}));
+        addParam<"threads">(numThreads, NaturalRangeArgument<>(1, {1, 64}));
+        addParam<"minlen">(minLen, NaturalRangeArgument<>(5, {1, 10000}));
+        addParam<"maxsize">(maxSize, NaturalRangeArgument<>(500, {1, 10000}));
         // addParam<"-batch", "--batch_size">(batch, NaturalRangeArgument<>(1, {1, 20}));
         // addParam<"-vectors", "--export_code_vectors">(exportVectors, CostrainedArgument());
-        addParam<"-lang", "--dataset_language">(lang, ConstrainedArgument<std::string>("cpp", {"c", "cpp"}));
+        addParam<"lang">(lang, ConstrainedArgument<std::string>("cpp", {"c", "cpp"}));
         // addParam<"-contexts", "--path_contexts_encoding">(contexts,
         //                        CostrainedArgument<std::string>("tpt", {"tpt", "rt"}));
         // addParam<"-tokens", "--tokens_encoding">(tokens,
         // CostrainedArgument<size_t>(0, {0, 1}));
-        addParam<"-dir", "--dataset_directory">(dir, DirectoryArgument<std::string>("/home"));
+        addParam<"dir">(dir, DirectoryArgument<std::string>("/home/liudmila/cmc/Coursework_test"));
         // addParam<"-metadata", "--metadata_database">(metadata,
         // DirectoryArgument<std::string>("/home"));
-        addParam<"-traversal", "--traversal_policy">(
+        addParam<"traversal">(
             traversal, ConstrainedArgument<std::string>("root_terminal", {"root_terminal", "terminal_terminal"}));
-        addParam<"-token", "--token_rules">(
-            token, ConstrainedArgument<std::string>("masked_identifiers", {"masked_identifiers"}));
-        addParam<"-split", "--split_strategy">(split, ConstrainedArgument<std::string>("ids_hash", {"ids_hash"}));
-        addParam<"-outdir", "--output_directory">(outdir, DirectoryArgument<std::string>("/home/liudmila"));
+        addParam<"token">(token, ConstrainedArgument<std::string>("masked_identifiers", {"masked_identifiers"}));
+        addParam<"split">(split, ConstrainedArgument<std::string>("ids_hash", {"ids_hash"}));
+        addParam<"outdir">(outdir, DirectoryArgument<std::string>("/home/liudmila/cmc/Coursework_test"));
     }
 };
 
@@ -91,6 +94,9 @@ main(int argc, char *argv[])
 
     } catch (const char *err) {
         std::cerr << err << std::endl;
+        return 1;
+    } catch (const std::string &s) {
+        std::cerr << s << std::endl;
         return 1;
     }
 

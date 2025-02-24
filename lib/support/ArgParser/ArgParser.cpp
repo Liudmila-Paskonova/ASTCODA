@@ -14,6 +14,7 @@ argparser::Arguments::parse(int argc, char *argv[])
         std::string param;
         if (arg.starts_with("-")) {
             // arg is a key
+            arg.erase(arg.begin());
             auto it = std::find_if(parameters.begin(), parameters.end(),
                                    [&arg](const auto &p) { return p.first.sharg == arg; });
 

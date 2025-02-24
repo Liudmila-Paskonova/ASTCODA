@@ -133,7 +133,7 @@ class Tokenizer
     /// @return TokenizedToken
     static std::optional<std::vector<TokenizedToken>>
     defaultTokenization(const std::vector<TSNode> &node, const std::string &src,
-                        std::unordered_map<size_t, std::string> &vocab);
+                        std::unordered_map<size_t, std::string> &vocab, size_t min_pathtoken_len = 5);
 };
 
 /// Class that stores split strategies
@@ -164,12 +164,12 @@ static std::unordered_map<std::string, std::function<std::vector<std::vector<TSN
                        {"terminal_terminal", std::bind(&Traversal::terminal2terminal, std::placeholders::_1)}};
 
 /// Mapping between options and tokenization callables
-static std::unordered_map<
-    std::string, std::function<std::optional<std::vector<TokenizedToken>>(
-                     const std::vector<TSNode> &, const std::string &, std::unordered_map<size_t, std::string> &)>>
+static std::unordered_map<std::string, std::function<std::optional<std::vector<TokenizedToken>>(
+                                           const std::vector<TSNode> &, const std::string &,
+                                           std::unordered_map<size_t, std::string> &, size_t)>>
     tokenizationRules = {
         {"masked_identifiers", std::bind(&Tokenizer::defaultTokenization, std::placeholders::_1, std::placeholders::_2,
-                                         std::placeholders::_3)},
+                                         std::placeholders::_3, std::placeholders::_4)},
 };
 
 /// Mapping between options and split callables
@@ -186,7 +186,8 @@ class Tree
     std::function<std::vector<std::vector<TSNode>>(const TSNode &)> &traversal;
     /// A callable for nodes' tokenization
     std::function<std::optional<std::vector<TokenizedToken>>(const std::vector<TSNode> &, const std::string &,
-                                                             std::unordered_map<size_t, std::string> &)> &tokenizer;
+                                                             std::unordered_map<size_t, std::string> &, size_t)>
+        &tokenizer;
     /// A callable to split sequences of nodes
     std::function<std::string(const std::vector<TokenizedToken> &)> &split;
 
@@ -198,6 +199,8 @@ class Tree
     std::string src;
     /// The root of a tree
     TSNode root;
+    /// Minimum number of nodes that path-token can contain
+    size_t minPathtokenLen;
 
   public:
     /// A vocabulary storing mapping between hashes and the corresponding terminals' names
@@ -210,7 +213,7 @@ class Tree
     /// @param tokenizationParam tokenization option (the way we encode nodes)
     /// @param splitParam split option (the way we construct a path-context from sequence of nodes)
     Tree(const std::string &fileName, const std::string &lang, const std::string &traversalParam,
-         const std::string &tokenizationParam, const std::string &splitParam);
+         const std::string &tokenizationParam, const std::string &splitParam, size_t minPathtokenLen);
 
     /// A function that applies the chosen callables to process an inner file in the right way
     /// @return a vector of strings representing one line in the resulting file

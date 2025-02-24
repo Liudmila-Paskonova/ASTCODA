@@ -212,15 +212,16 @@ template <std::size_t Len> struct ShortArg {
         if (strlen(str) <= 1) {
             throw "Short argument is too short";
         }
-
-        if (str[0] != '-' || str[1] == '-') {
-            throw "Short argument should contain \'-\'!";
-        }
+        /*
+                if (str[0] != '-' || str[1] == '-') {
+                    throw "Short argument should contain \'-\'!";
+                }
+                */
 
         std::copy_n(str, Len, argstr);
     }
 };
-
+/*
 /// A compile-time wrapper a long key, e.g. a key, beginning with '--'
 /// @tparam Len - length of the string
 template <std::size_t Len> struct LongArg {
@@ -243,13 +244,13 @@ template <std::size_t Len> struct LongArg {
         std::copy_n(str, Len, argstr);
     }
 };
+*/
 
 /// Custom key for maps
 class KeyParam
 {
   public:
     std::string sharg;
-    std::string larg;
 
     bool operator<(const KeyParam &k2) const;
 };
@@ -269,7 +270,7 @@ class Arguments
     /// @tparam larg - long argument
     /// @param value - an object of the type @tparam T
     /// @param obj - concrete Argument type (e.g. DirectoryArgument, NaturalRangeArgument etc.)
-    template <ShortArg sharg, LongArg larg, typename T, template <typename> class Object>
+    template <ShortArg sharg, typename T, template <typename> class Object>
         requires((std::is_arithmetic<T>() == true || std::same_as<T, std::string>) &&
                  (std::same_as<Object<T>, FileArgument<T>> || std::same_as<Object<T>, DirectoryArgument<T>> ||
                   std::same_as<Object<T>, NaturalRangeArgument<T>> || std::same_as<Object<T>, ConstrainedArgument<T>> ||
@@ -278,8 +279,8 @@ class Arguments
     addParam(T &value, const Object<T> &obj)
     {
         value = obj.defaultValue;
-        parameters[{sharg.argstr, larg.argstr}] = std::make_unique<Object<T>>(obj);
-        values[{sharg.argstr, larg.argstr}] = &value;
+        parameters[{sharg.argstr}] = std::make_unique<Object<T>>(obj);
+        values[{sharg.argstr}] = &value;
     }
 
   public:

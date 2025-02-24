@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <optional>
+#include <print>
 
 treesitter::TreeSitterNode &
 treesitter::TreeSitterNode::operator=(const TreeSitterNode &other)
@@ -274,19 +275,19 @@ treesitter::Traversal::terminal2terminal(const TSNode &root)
 
 std::optional<std::vector<treesitter::TokenizedToken>>
 treesitter::Tokenizer::defaultTokenization(const std::vector<TSNode> &nodes, const std::string &src,
-                                           std::unordered_map<size_t, std::string> &vocab)
+                                           std::unordered_map<size_t, std::string> &vocab, size_t min_pathtoken_len)
 {
     // remove comments
     if (ts_node_is_extra(nodes.back())) {
         return std::nullopt;
     }
     // remove too short branches (e.g. #define ..., #include ...)
-    if (nodes.size() < 5) {
+    if (nodes.size() < min_pathtoken_len) {
         return std::nullopt;
     }
     std::vector<TokenizedToken> res;
     for (auto &node : nodes) {
-        std::string id = std::format("{:0>3}", ts_node_grammar_symbol(node));
+        std::string id = std::to_string(ts_node_grammar_symbol(node));
         size_t name;
         if (!ts_node_is_null(node) && ts_node_child_count(node) == 0) {
             // terminal
@@ -313,24 +314,27 @@ treesitter::Tokenizer::defaultTokenization(const std::vector<TSNode> &nodes, con
 }
 
 std::string
-treesitter::Split::toBranch(const std::vector<TokenizedToken> &pathContext)
+treesitter::Split::toBranch(const std::vector<TokenizedToken> &pathToken)
 {
     std::string res;
-    for (const auto &token : pathContext) {
-        res += token.id;
+    for (const auto &token : pathToken) {
+        res += token.id + "_";
     }
-    auto hashed = pathContext.back().name;
-    res += "_" + std::to_string(hashed);
+    auto hashed = pathToken.back().name;
+    res += std::to_string(hashed);
 
     return res;
 }
 
 treesitter::Tree::Tree(const std::string &fileName, const std::string &lang, const std::string &traversalParam,
-                       const std::string &tokenizationParam, const std::string &splitParam)
+                       const std::string &tokenizationParam, const std::string &splitParam, size_t minPathtokenLen)
     : traversal(traversalPolicy[traversalParam]), tokenizer(tokenizationRules[tokenizationParam]),
-      split(splitStrategy[splitParam])
+      split(splitStrategy[splitParam]), minPathtokenLen(minPathtokenLen)
 {
     std::ifstream file(fileName);
+    if (!file) {
+        std::println("No such file: {}!", fileName);
+    }
     std::stringstream ss;
     ss << file.rdbuf();
     file.close();
@@ -352,15 +356,15 @@ treesitter::Tree::process()
     auto pathVectors = traversal(root);
     std::vector<std::vector<TokenizedToken>> tokens;
     for (const auto &path : pathVectors) {
-        // get a tokenized path-context
-        auto temp = tokenizer(path, src, vocab);
+        // get a tokenized path-token
+        auto temp = tokenizer(path, src, vocab, minPathtokenLen);
         if (temp.has_value()) {
             tokens.push_back(temp.value());
         }
     }
     std::vector<std::string> res;
     for (auto &token : tokens) {
-        // get path-context's final representation
+        // get token's final representation
         res.push_back(split(token));
     }
     return res;
