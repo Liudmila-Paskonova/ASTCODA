@@ -106,6 +106,7 @@ main(int argc, char *argv[])
             tokensTestFile << sent << "\n";
             labelsTestFile << label << "\n";
         }
+        ind++;
     }
     tokensFile.close();
     tokensTrainFile.close();
