@@ -66,12 +66,13 @@ main(int argc, char *argv[])
 
     size_t subNumber = 0;
 
-    std::ifstream tokensFile(p.tokensPath);
+    std::ifstream temp(p.tokensPath);
 
-    while (std::getline(tokensFile, line)) {
+    while (std::getline(temp, line)) {
         subNumber++;
     }
-    tokensFile.close();
+    temp.close();
+    std::ifstream tokensFile(p.tokensPath);
 
     size_t trainNumber = subNumber / 100 * p.trainSplit;
     size_t validNumber = subNumber / 100 * p.validSplit;
