@@ -57,13 +57,21 @@ main(int argc, char *argv[])
 
     std::unordered_map<std::string, std::string> file2label;
     std::ifstream labelsFile(p.labelsPath);
-    size_t subNumber = 0;
+
     while (std::getline(labelsFile, line)) {
         auto arr = std::views::split(line, ' ') | std::ranges::to<std::vector<std::string>>();
         file2label[arr[0]] = arr[1];
-        ++subNumber;
     }
     labelsFile.close();
+
+    size_t subNumber = 0;
+
+    std::ifstream tokensFile(p.tokensPath);
+
+    while (std::getline(tokensFile, line)) {
+        subNumber++;
+    }
+    tokensFile.close();
 
     size_t trainNumber = subNumber / 100 * p.trainSplit;
     size_t validNumber = subNumber / 100 * p.validSplit;
@@ -71,7 +79,6 @@ main(int argc, char *argv[])
 
     auto classes = support::trainTestValidSplit(trainNumber, validNumber, testNumber);
 
-    std::ifstream tokensFile(p.tokensPath);
     std::ofstream tokensTrainFile(p.outDir + "/tokens_train.txt");
     std::ofstream tokensValidFile(p.outDir + "/tokens_valid.txt");
     std::ofstream tokensTestFile(p.outDir + "/tokens_test.txt");
