@@ -11,6 +11,8 @@ namespace support
 {
 std::vector<std::filesystem::path> getNRandomFiles(const std::filesystem::path &dir, size_t n);
 
+std::vector<size_t> trainTestValidSplit(size_t trainNumber, size_t validNumber, size_t testNumber);
+
 /// Type base
 template <size_t idx, typename... Ts> struct Type {
 };

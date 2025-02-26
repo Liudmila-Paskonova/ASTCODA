@@ -1,30 +1,5 @@
 /*#########################################################################################################//
 Tool for dataset preprocessing
-
-Supposing the following structure of a raw dataset,
-  |- dataset_directory
-  |----|- prob1_name
-  |    |---- sub1_name
-  |    |---- sub2_name
-  |      ...
-  |---- prob2_name
-  |    |---- sub1_name
-  |    |---- sub2_name
-  |      ...
-this tool will create a new dataset:
-  |- train_split_directory
-  |----|- train
-  |    |---- sub1_name
-  |    |---- sub2_name
-  |----|- val
-  |    |---- sub1_name
-  |    |---- sub2_name
-
-  --number_of_problems      |-nprobs    |= number of problems prob1_name, prob2_name... extracted
-  --number_of_submissions   |-nsubs     |= number of submissions extracted from each problem folder
-  --dataset_directory       |-datadir   |= folder with original files
-  --train_split_directory   |- traindir |= folder for train and validation datasets
-  --split_train_val         |- split    |= train-val split, %, e.g. 75% means train:val = 3:1 segmentation
 //#########################################################################################################*/
 
 #include <support/Support/Support.h>
@@ -37,23 +12,30 @@ this tool will create a new dataset:
 #include <set>
 #include <print>
 #include <format>
+#include <fstream>
+#include <ranges>
+#include <unordered_map>
 
 struct Parameters : public argparser::Arguments {
-    size_t numProbs;
-    size_t numSubs;
-    size_t split;
-    std::string dataDir;
+    size_t trainSplit;
+    size_t testSplit;
+    size_t validSplit;
+    std::string tokensPath;
+    std::string labelsPath;
     std::string outDir;
 
     Parameters()
     {
         using namespace argparser;
 
-        addParam<"nprobs">(numProbs, NaturalRangeArgument<>(UINT32_MAX, {0, UINT32_MAX}));
-        addParam<"nsubs">(numSubs, NaturalRangeArgument<>(UINT32_MAX, {0, UINT32_MAX}));
-        addParam<"split">(split, NaturalRangeArgument<>(75, {0, 100}));
-        addParam<"datadir">(dataDir, DirectoryArgument<std::string>("/home"));
-        addParam<"outdir">(outDir, DirectoryArgument<std::string>("/home"));
+        addParam<"train_split">(trainSplit, NaturalRangeArgument<>(80, {0, 100}));
+        addParam<"test_split">(testSplit, NaturalRangeArgument<>(10, {0, 100}));
+        addParam<"valid_split">(validSplit, NaturalRangeArgument<>(10, {0, 100}));
+        // <filename> <token1> <token2> ... <token m> ...
+        addParam<"tokens_path">(tokensPath, FileArgument<std::string>("/home"));
+        // <filename> <domain>_<class>
+        addParam<"labels_path">(labelsPath, FileArgument<std::string>("/home"));
+        addParam<"output_directory">(outDir, DirectoryArgument<std::string>("/home"));
     }
 };
 
@@ -62,78 +44,66 @@ namespace fs = std::filesystem;
 int
 main(int argc, char *argv[])
 {
-    try {
-        Parameters p;
-        p.parse(argc, argv);
 
-        if (!fs::exists(p.dataDir)) {
-            throw "No such data dir!";
-        }
-        if (!fs::exists(p.outDir)) {
-            throw "No such output dir!";
-        }
-        fs::path dataDir = p.dataDir;
-        fs::path outDir = p.outDir;
+    Parameters p;
+    p.parse(argc, argv);
 
-        fs::path trainDir = outDir / "train";
-        if (!fs::exists(trainDir)) {
-            fs::create_directory(trainDir);
-        }
-        fs::path valDir = outDir / "val";
-        if (!fs::exists(valDir)) {
-            fs::create_directory(valDir);
-        }
-
-        auto cmp = [](const std::pair<unsigned long long, std::string> &a,
-                      const std::pair<unsigned long long, std::string> &b) { return a.first > b.first; };
-
-        // find the nprobs problems with the most files
-        std::set<std::pair<unsigned long long, std::string>, decltype(cmp)> problemsRank;
-        for (const auto &prob : fs::directory_iterator(dataDir)) {
-            if (prob.is_directory()) {
-                auto name = prob.path().filename();
-                unsigned long long count = 0;
-                for (const auto &sub : fs::directory_iterator(prob.path())) {
-                    ++count;
-                }
-
-                if (problemsRank.size() < p.numProbs || (std::prev(problemsRank.end())->first < count)) {
-                    problemsRank.insert({count, name});
-                    if (problemsRank.size() > p.numProbs) {
-                        problemsRank.erase(std::prev(problemsRank.end()));
-                    }
-                }
-            }
-        }
-        unsigned long long filesTotal = 0;
-        // copy selected files to the outdir
-        for (const auto &[count, probName] : problemsRank) {
-            auto probPath = dataDir / probName;
-            auto vec = support::getNRandomFiles(probPath, p.numSubs);
-            for (const auto &v : vec) {
-                fs::copy(v, outDir, fs::copy_options::overwrite_existing);
-            }
-            filesTotal += vec.size();
-        }
-        // get number of files in a train folder
-        auto trainNum = p.split * (filesTotal / 100);
-
-        auto trainVec = support::getNRandomFiles(outDir, trainNum);
-
-        // move files to train and validation folders
-        for (const auto &v : trainVec) {
-            fs::copy(v, trainDir, fs::copy_options::overwrite_existing);
-            fs::remove(v);
-        }
-        for (const auto &sub : fs::directory_iterator(outDir)) {
-            if (sub.is_regular_file()) {
-                fs::copy(sub.path(), valDir, fs::copy_options::overwrite_existing);
-                fs::remove(sub.path());
-            }
-        }
-
-    } catch (const std::string &s) {
-        std::println("{}", s);
-        exit(1);
+    if (p.testSplit + p.trainSplit + p.validSplit != 100) {
+        throw std::format("Train, test and validation splits must be 100\% in sum, but it's {}!",
+                          p.testSplit + p.trainSplit + p.validSplit);
     }
+
+    std::string line;
+
+    std::unordered_map<std::string, std::string> file2label;
+    std::ifstream labelsFile(p.labelsPath);
+    size_t subNumber = 0;
+    while (std::getline(labelsFile, line)) {
+        auto arr = std::views::split(line, ' ') | std::ranges::to<std::vector<std::string>>();
+        file2label[arr[0]] = arr[1];
+        ++subNumber;
+    }
+    labelsFile.close();
+
+    size_t trainNumber = subNumber / 100 * p.trainSplit;
+    size_t validNumber = subNumber / 100 * p.validSplit;
+    auto testNumber = subNumber - trainNumber - validNumber;
+
+    auto classes = support::trainTestValidSplit(trainNumber, validNumber, testNumber);
+
+    std::ifstream tokensFile(p.tokensPath);
+    std::ofstream tokensTrainFile(p.outDir + "/tokens_train.txt");
+    std::ofstream tokensValidFile(p.outDir + "/tokens_valid.txt");
+    std::ofstream tokensTestFile(p.outDir + "/tokens_test.txt");
+    std::ofstream labelsTrainFile(p.outDir + "/labels_train.txt");
+    std::ofstream labelsValidFile(p.outDir + "/labels_valid.txt");
+    std::ofstream labelsTestFile(p.outDir + "/labels_test.txt");
+    size_t ind = 0;
+    while (std::getline(tokensFile, line)) {
+        auto arr = std::views::split(line, ' ');
+        auto file_range = arr | std::ranges::views::take(1);
+        auto subrange = *file_range.begin();
+        auto filename = std::string(subrange.begin(), subrange.end());
+        auto label = file2label[filename];
+
+        auto sent = arr | std::ranges::views::drop(1) | std::views::join_with(' ') | std::ranges::to<std::string>();
+        std::ofstream tokenStream, labelStream;
+        if (classes[ind] == 0) {
+            tokensTrainFile << sent << "\n";
+            labelsTrainFile << label << "\n";
+        } else if (classes[ind] == 1) {
+            tokensValidFile << sent << "\n";
+            labelsValidFile << label << "\n";
+        } else if (classes[ind] == 2) {
+            tokensTestFile << sent << "\n";
+            labelsTestFile << label << "\n";
+        }
+    }
+    tokensFile.close();
+    tokensTrainFile.close();
+    tokensValidFile.close();
+    tokensTestFile.close();
+    labelsTrainFile.close();
+    labelsValidFile.close();
+    labelsTestFile.close();
 }
