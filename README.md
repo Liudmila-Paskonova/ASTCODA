@@ -1,46 +1,7 @@
 # Coursework
-## Requirements
-1. Same as for [code2vec](https://github.com/tech-srl/code2vec?tab=readme-ov-file#requirements), excluding ```JavaJDK``` 
-2. ```gdown```
-3. Any web browser to display ```html``` 
-4. ```dot``` to draw AST of a program
 
-## Build
-``` bash
-chmod +x build.sh
-./build.sh
-```
 
-## Download pretrained model (2 Gb)
-``` bash
-gdown "https://drive.google.com/uc?id=1hBcqrhF3d7LsY36mhSGyY9oY1zEUTHJ6&export=download"
-unzip c250k_model.zip
-```
-or right [here](https://drive.google.com/uc?id=1hBcqrhF3d7LsY36mhSGyY9oY1zEUTHJ6&export=download).
-
-## Run prediction
-1. Set parameters in ```run.sh```, particularly:  
-    - ```PROBLEM_NAME```  (default = "bit-reverse")
-        - problem from examples folder, e.g. "bit-reverse" 
-    - ```FILENAME```  (default = "1")
-    - ```EXTENSION``` (default = "c")
-        - exact solution in PROBLEM_NAME folder 
-    - ```MODEL``` (default = "c250k_model/c250k_model")
-        - code2vec pretrained model
-    - ```TOP_K``` (default = 10) 
-        - maximum number of clusters to highlight = number of buttons in generated html    
-
-    and others  
-
-2. Run
-    ``` bash
-    chmod +x run.sh
-    ./run.sh
-    ```
-3. Run ```data/PROBLEM_NAME/FILENAME/FILENAME.html```, for example
-    ``` bash
-    firefox data/bit-reverse/1/1.html
-    ```
+Download [pretrained embeddings](https://disk.yandex.ru/d/vgcdrGZTydmQcw)
 ## Directory tree
 ``` bash
 ├── build # binaries and makefile data
