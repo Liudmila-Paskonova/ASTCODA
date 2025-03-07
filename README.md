@@ -1,8 +1,8 @@
 # Coursework
 
 **Pretrained embeddings**
-- [C](https://disk.yandex.ru/d/PRbuA3DZ3Zg9Mg)
-- [C++](https://disk.yandex.ru/d/foor9dUAI349Mg)
+- [C](https://disk.yandex.ru/d/PRbuA3DZ3Zg9Mg) (14.7 GB)
+- [C++](https://disk.yandex.ru/d/foor9dUAI349Mg) (28.4 GB)
 
 ## Directory tree
 ``` bash
