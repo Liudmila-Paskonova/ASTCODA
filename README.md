@@ -1,8 +1,37 @@
 # Coursework
 
-**Pretrained embeddings**
+**Pretrained embeddings**  
 - [C](https://disk.yandex.ru/d/PRbuA3DZ3Zg9Mg) (14.7 GB)
 - [C++](https://disk.yandex.ru/d/foor9dUAI349Mg) (28.4 GB)
+
+## Datasets
+
+```bash
+├── test # 10%
+├── train # 80%
+├── valid # 10%
+└── labels.csv
+```
+
+### AI detection
+
+[download](https://disk.yandex.ru/d/1a98iHPB-RB0kA)
+
+| Subset   | Number of files |
+| -------- | --------------- |
+| Train    | 500283          |
+| Valid    | 62535           |
+| Test     | 62536           |
+
+### Vulnerability detection
+
+[download](https://disk.yandex.ru/d/ZAr8GZPQEBo5zg)
+
+| Subset   | Number of files |
+| -------- | --------------- |
+| Train    | 333300          |
+| Valid    | 41662           |
+| Test     | 41663           |
 
 ## Directory tree
 ``` bash
