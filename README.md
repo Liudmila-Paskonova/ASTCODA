@@ -1,7 +1,9 @@
 # Coursework
 
+**Pretrained embeddings**
+- [C](https://disk.yandex.ru/d/PRbuA3DZ3Zg9Mg)
+- [C++](https://disk.yandex.ru/d/foor9dUAI349Mg)
 
-Download [pretrained embeddings](https://disk.yandex.ru/d/vgcdrGZTydmQcw)
 ## Directory tree
 ``` bash
 ├── build # binaries and makefile data
