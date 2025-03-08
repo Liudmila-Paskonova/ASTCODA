@@ -12,6 +12,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # find_package(SQLite3 REQUIRED)
 # find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(Eigen3 3.4 REQUIRED NO_MODULE)
+find_package(nlohmann_json REQUIRED)
 
 add_subdirectory(lib)
 add_subdirectory(tools)
