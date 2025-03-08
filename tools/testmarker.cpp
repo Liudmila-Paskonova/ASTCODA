@@ -25,18 +25,13 @@ struct Parameters : public argparser::Arguments {
     Parameters()
     {
         using namespace argparser;
-        addParam<"prob">(prob, ConstrainedArgument<std::string>("p03160", {"p02743", "p02658", "p03160"}));
-        addParam<"npairs">(npairs, NaturalRangeArgument<>(1000, {1, 4000}));
-        addParam<"dir">(
-            dir, DirectoryArgument<std::string>("/home/liudmila/ssd-drive/Coursework_dataset/Project_CodeNet/C++"));
-        addParam<"stmts">(
-            stmts, DirectoryArgument<std::string>("/home/liudmila/ssd-drive/Coursework_dataset/Project_CodeNet/texts"));
-        addParam<"metadata">(metadata,
-                             FileArgument<std::string>(
-                                 "/home/liudmila/ssd-drive/Coursework_dataset/Project_CodeNet/C++/metadata_cpp.db"));
-        addParam<"lang">(lang, ConstrainedArgument<std::string>("cpp", {"c", "cpp"}));
-        addParam<"outdir">(outdir, DirectoryArgument<std::string>(
-                                       "/home/liudmila/ssd-drive/Coursework_dataset/Project_CodeNet/labels2"));
+        addParam<"prob">(prob, ConstrainedArgument<std::string>({"p02743", "p02658", "p03160"}));
+        addParam<"npairs">(npairs, NaturalRangeArgument<>({1, 4000}));
+        addParam<"dir">(dir, DirectoryArgument<std::string>());
+        addParam<"stmts">(stmts, DirectoryArgument<std::string>());
+        addParam<"metadata">(metadata, FileArgument<std::string>());
+        addParam<"lang">(lang, ConstrainedArgument<std::string>({"c", "cpp"}));
+        addParam<"outdir">(outdir, DirectoryArgument<std::string>());
     }
 };
 

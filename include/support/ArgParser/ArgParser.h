@@ -11,56 +11,88 @@
 #include <map>
 #include <memory>
 #include <cstring>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 namespace argparser
 {
+using json = nlohmann::json;
+
+template <typename T>
+concept IsVector = requires {
+    typename T::value_type;
+    typename T::allocator_type;
+} && std::same_as<T, std::vector<typename T::value_type, typename T::allocator_type>>;
 
 /// Abstract class representing one Argument type
 struct Argument {
 
     virtual ~Argument() {};
 
-    /// A function that updates @param value with a new @param param value.
+    /// A function that updates value with a new param value.
     /// @param value - a reference (represented as std::any) to some object.
     /// @param param - a command line argument to convert
     virtual void setValue(std::any &value, const std::string &param) = 0;
 
-    /// A function that tries to convert a given command line argument  @param param into a known type @tparam T.
+    /// A function that tries to convert a given command line argument param into a known type T.
     /// @tparam T - a type
-    /// @param value - a reference (represented as std::any) to @tparam T object.
+    /// @param value - a reference (represented as std::any) to T object.
     /// @param param - a command line argument to convert
-    /// @return the expected @tparam T value, @exception if impossible
+    /// @return the expected T value, @exception if impossible
     template <typename T>
     decltype(auto)
     getValue(std::any &value, const std::string &param)
     {
         auto concreteValue = std::any_cast<T *>(&value);
-        std::istringstream istream(param);
-        if (!(istream >> **concreteValue)) {
-            throw std::format("Unable to parse string: {}!", param);
+        if constexpr (IsVector<T>) {
+            (**concreteValue).clear();
+
+            using ElementType = typename T::value_type;
+            std::istringstream istream(param);
+            std::string token;
+            while (istream >> token) {
+                std::istringstream tokenStream(token);
+                ElementType elem;
+                if (!(tokenStream >> elem)) {
+                    throw std::format("Unable to parse token: {}!", token);
+                }
+                (**concreteValue).push_back(elem);
+            }
+        } else {
+            std::istringstream istream(param);
+            if (!(istream >> **concreteValue)) {
+                throw std::format("Unable to parse the string: {}!", param);
+            }
         }
         return **concreteValue;
-    }
+    };
 };
-
 /// Class to represent Directory argument
 /// @tparam T - a concrete type (only std::string is allowed)
 template <typename T = std::string>
     requires(std::same_as<T, std::string>)
 class DirectoryArgument : public Argument
 {
+    bool readOnly;
+
   public:
-    T defaultValue;
+    DirectoryArgument(bool readOnly = true) : readOnly(readOnly) {}
 
-    DirectoryArgument(const T &defVal) : defaultValue(defVal) { checkValue(defVal); }
-
-    /// @brief Check if a provided @param value is a directory
+    /// @brief Check if a provided value is a directory
     /// @param value - a value to check
     void
     checkValue(const T &value)
     {
-        if (!std::filesystem::is_directory(value) || !std::filesystem::exists(value)) {
-            throw std::format("{} is not a directory!", value);
+        if (readOnly) {
+            if (!std::filesystem::is_directory(value) || !std::filesystem::exists(value)) {
+                throw std::format("{} is not a directory!", value);
+            }
+        } else {
+            if (std::filesystem::exists(value) && !std::filesystem::is_directory(value)) {
+                throw std::format("{} is not a directory!", value);
+            } else if (!std::filesystem::exists(value)) {
+                std::filesystem::create_directory(value);
+            }
         }
     }
 
@@ -78,19 +110,20 @@ template <typename T = std::string>
     requires(std::same_as<T, std::string>)
 class FileArgument : public Argument
 {
+    bool readOnly;
 
   public:
-    T defaultValue;
+    FileArgument(bool readOnly = true) : readOnly(readOnly) {}
 
-    FileArgument(const T &defVal) : defaultValue(defVal) { checkValue(defVal); }
-
-    /// @brief Check if a provided @param value is a file
+    /// @brief Check if a provided value is a file
     /// @param value - a value to check
     void
     checkValue(const T &value)
     {
-        if (!std::filesystem::is_regular_file(value) || !std::filesystem::exists(value)) {
-            throw std::format("{} is not a file!", value);
+        if (readOnly) {
+            if (!std::filesystem::is_regular_file(value) || !std::filesystem::exists(value)) {
+                throw std::format("{} is not a file!", value);
+            }
         }
     }
 
@@ -112,15 +145,12 @@ class NaturalRangeArgument : public Argument
     T maxValue;
 
   public:
-    T defaultValue;
-
-    NaturalRangeArgument(T defVal = 0, const std::pair<T, T> &rangeBorders = {0, std::numeric_limits<T>::max()})
-        : defaultValue(defVal), minValue(rangeBorders.first), maxValue(rangeBorders.second)
+    NaturalRangeArgument(const std::pair<T, T> &rangeBorders = {0, std::numeric_limits<T>::max()})
+        : minValue(rangeBorders.first), maxValue(rangeBorders.second)
     {
-        checkValue(defVal);
     }
 
-    /// @brief Check if a provided @param value lies in the predefined range
+    /// @brief Check if a provided value lies in the predefined range
     /// @param value - a value to check
     void
     checkValue(const T &value)
@@ -147,15 +177,9 @@ class ConstrainedArgument : public Argument
     std::set<T> container;
 
   public:
-    T defaultValue;
+    ConstrainedArgument(const std::set<T> &cont = {false, true}) : container(cont) {}
 
-    ConstrainedArgument(T defVal = false, const std::set<T> &cont = {false, true})
-        : defaultValue(defVal), container(cont)
-    {
-        checkValue(defVal);
-    }
-
-    /// @brief Check if a provided @param value exists in the predefined container
+    /// @brief Check if a provided value exists in the predefined container
     /// @param value - a value to check
     void
     checkValue(const T &value)
@@ -187,9 +211,7 @@ class ConstrainedArgument : public Argument
 template <typename T> class UnconstrainedArgument : public Argument
 {
   public:
-    T defaultValue;
-
-    UnconstrainedArgument(const T &defVal) : defaultValue(defVal) {}
+    UnconstrainedArgument() {}
 
     void
     setValue(std::any &value, const std::string &param) override
@@ -212,39 +234,10 @@ template <std::size_t Len> struct ShortArg {
         if (strlen(str) <= 1) {
             throw "Short argument is too short";
         }
-        /*
-                if (str[0] != '-' || str[1] == '-') {
-                    throw "Short argument should contain \'-\'!";
-                }
-                */
 
         std::copy_n(str, Len, argstr);
     }
 };
-/*
-/// A compile-time wrapper a long key, e.g. a key, beginning with '--'
-/// @tparam Len - length of the string
-template <std::size_t Len> struct LongArg {
-    char argstr[Len]{};
-
-    consteval LongArg(const char (&str)[Len])
-    {
-        if (!str) {
-            throw "Empty argument!";
-        }
-
-        if (strlen(str) <= 2) {
-            throw "Long argument is too short";
-        }
-
-        if (str[0] != '-' || str[1] != '-') {
-            throw "Long argument should contain \'--\'!";
-        }
-
-        std::copy_n(str, Len, argstr);
-    }
-};
-*/
 
 /// Custom key for maps
 class KeyParam
@@ -271,14 +264,13 @@ class Arguments
     /// @param value - an object of the type @tparam T
     /// @param obj - concrete Argument type (e.g. DirectoryArgument, NaturalRangeArgument etc.)
     template <ShortArg sharg, typename T, template <typename> class Object>
-        requires((std::is_arithmetic<T>() == true || std::same_as<T, std::string>) &&
+        requires((std::is_arithmetic<T>() == true || std::same_as<T, std::string> || IsVector<T>) &&
                  (std::same_as<Object<T>, FileArgument<T>> || std::same_as<Object<T>, DirectoryArgument<T>> ||
                   std::same_as<Object<T>, NaturalRangeArgument<T>> || std::same_as<Object<T>, ConstrainedArgument<T>> ||
                   std::same_as<Object<T>, UnconstrainedArgument<T>>) )
     void
     addParam(T &value, const Object<T> &obj)
     {
-        value = obj.defaultValue;
         parameters[{sharg.argstr}] = std::make_unique<Object<T>>(obj);
         values[{sharg.argstr}] = &value;
     }
@@ -288,6 +280,10 @@ class Arguments
     /// @param argc
     /// @param argv
     void parse(int argc, char *argv[]);
+
+    /// Load arguments from JSON file
+    /// @param pathJSON
+    void fromJSON(const std::string &pathJSON);
 };
 
 template <bool> ConstrainedArgument() -> ConstrainedArgument<bool>;

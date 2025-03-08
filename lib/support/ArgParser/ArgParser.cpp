@@ -41,3 +41,46 @@ argparser::Arguments::parse(int argc, char *argv[])
         }
     }
 }
+
+void
+argparser::Arguments::fromJSON(const std::string &pathJSON)
+{
+    std::ifstream f(pathJSON);
+    json tempJson = json::object();
+    f >> tempJson;
+    f.close();
+
+    for (auto &[key, param] : parameters) {
+        auto val = tempJson.find(key.sharg);
+        if (val != tempJson.end()) {
+            std::string arg = val.key();
+            auto vit =
+                std::find_if(values.begin(), values.end(), [&arg](const auto &p) { return p.first.sharg == arg; });
+            auto value = val.value();
+            std::string res;
+            if (value.is_boolean()) {
+                param->setValue(vit->second, std::to_string(int(value)));
+            } else if (value.is_number()) {
+                param->setValue(vit->second, value.dump());
+            } else if (value.is_string()) {
+                param->setValue(vit->second, value);
+            } else if (value.is_array()) {
+                std::string temp;
+                for (auto &elem : value) {
+                    if (elem.is_boolean()) {
+                        temp += std::to_string(int(elem)) + " ";
+                    } else if (elem.is_number()) {
+                        temp += elem.dump() + " ";
+                    } else if (elem.is_string()) {
+                        temp += elem;
+                        temp += " ";
+                    }
+                }
+                temp.back() = '\0';
+                param->setValue(vit->second, temp);
+            }
+        } else {
+            throw std::format("There's no {} among keys in the given JSON {}!", key.sharg, pathJSON);
+        }
+    }
+}

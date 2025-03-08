@@ -9,6 +9,13 @@
 
 namespace support
 {
+
+/// Function that splits the given line with a delimites
+/// @param line - the given line
+/// @param delimiter - line delimiter
+/// @return vector<string> tokens
+std::vector<std::string> splitLine(const std::string &line, char delimiter = ' ');
+
 std::vector<std::filesystem::path> getNRandomFiles(const std::filesystem::path &dir, size_t n);
 
 std::vector<size_t> trainTestValidSplit(size_t trainNumber, size_t validNumber, size_t testNumber);
@@ -237,5 +244,6 @@ template <typename... Ts> struct is_instantiation_of_tuple<ArgTuple<Ts...>> : st
 
 template <typename... Ts>
 concept IsTuple = is_instantiation_of_tuple<Ts...>::value;
+
 }; // namespace support
 #endif

@@ -49,3 +49,15 @@ support::trainTestValidSplit(size_t trainNumber, size_t validNumber, size_t test
 
     return classes;
 }
+
+std::vector<std::string>
+support::splitLine(const std::string &line, char delimiter)
+{
+    std::vector<std::string> tokens;
+    std::istringstream iss(line);
+    std::string token;
+    while (std::getline(iss, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}

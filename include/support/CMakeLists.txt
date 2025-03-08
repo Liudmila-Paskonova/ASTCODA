@@ -1,5 +1,5 @@
 add_subdirectory(ArgParser)
 add_subdirectory(ThreadPool)
 add_subdirectory(TreeSitter)
-add_subdirectory(Database)
+# add_subdirectory(Database)
 add_subdirectory(Support)

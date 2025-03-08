@@ -289,6 +289,7 @@ treesitter::Tokenizer::defaultTokenization(const std::vector<TSNode> &nodes, con
     for (auto &node : nodes) {
         std::string id = std::to_string(ts_node_grammar_symbol(node));
         size_t name;
+        Point a, b;
         if (!ts_node_is_null(node) && ts_node_child_count(node) == 0) {
             // terminal
             std::string tempName;
@@ -302,12 +303,15 @@ treesitter::Tokenizer::defaultTokenization(const std::vector<TSNode> &nodes, con
             }
             // add a terminal to vocabulary
             name = std::hash<std::string>{}(tempName);
-            vocab[name] = "[" + tempName + "]";
+            vocab[name] = tempName;
+            a = Point(ts_node_start_point(node).row, ts_node_start_point(node).column);
+            b = Point(ts_node_end_point(node).row, ts_node_end_point(node).column);
+
         } else {
             // non-terminal
             name = 0;
         }
-        res.push_back(TokenizedToken(id, name));
+        res.push_back(TokenizedToken(id, name, a, b));
     }
 
     return res;
@@ -326,10 +330,17 @@ treesitter::Split::toBranch(const std::vector<TokenizedToken> &pathToken)
     return res;
 }
 
-treesitter::Tree::Tree(const std::string &fileName, const std::string &lang, const std::string &traversalParam,
-                       const std::string &tokenizationParam, const std::string &splitParam, size_t minPathtokenLen)
-    : traversal(traversalPolicy[traversalParam]), tokenizer(tokenizationRules[tokenizationParam]),
-      split(splitStrategy[splitParam]), minPathtokenLen(minPathtokenLen)
+std::string
+treesitter::Split::toPosition(const std::vector<TokenizedToken> &pathToken)
+{
+    auto startPoint = pathToken.back().startPoint;
+    auto endPoint = pathToken.back().endPoint;
+    std::string res = std::format("{}_{}_{}", startPoint.row, startPoint.column, endPoint.column);
+
+    return res;
+}
+
+treesitter::Tree::Tree(const std::string &fileName, const std::string &lang)
 {
     std::ifstream file(fileName);
     if (!file) {
@@ -350,8 +361,13 @@ treesitter::Tree::Tree(const std::string &fileName, const std::string &lang, con
 }
 
 std::vector<std::string>
-treesitter::Tree::process()
+treesitter::Tree::process(const std::string &traversalParam, const std::string &tokenizationParam,
+                          const std::string &splitParam, size_t minPathtokenLen, const std::string &posParam)
 {
+    auto traversal = traversalPolicy[traversalParam];
+    auto tokenizer = tokenizationRules[tokenizationParam];
+    auto split = splitStrategy[splitParam];
+
     // traverse the tree
     auto pathVectors = traversal(root);
     std::vector<std::vector<TokenizedToken>> tokens;
@@ -366,6 +382,8 @@ treesitter::Tree::process()
     for (auto &token : tokens) {
         // get token's final representation
         res.push_back(split(token));
+        // add postions
+        positions.push_back(token.back().startPoint.row + 1);
     }
     return res;
 }

@@ -9,12 +9,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-find_package(SQLite3 REQUIRED)
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+# find_package(SQLite3 REQUIRED)
+# find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Eigen3 3.4 REQUIRED NO_MODULE)
 
 add_subdirectory(lib)
 add_subdirectory(tools)
-#add_subdirectory(src)
+
 add_library(tree-lib tree-sitter/lib/src/lib.c tree-sitter-c/src/parser.c tree-sitter-cpp/src/parser.c)
 include_directories(
       tree-sitter/lib/src
@@ -24,19 +25,20 @@ include_directories(
 
 add_library(tree-sitter STATIC tree-sitter/lib/src/lib.c)
 target_include_directories(tree-sitter PUBLIC tree-sitter/lib/include tree-sitter/lib/src)
-# set tree-sitter-cpp
+
+### SET tree-sitter-cpp
 add_library(tree-sitter-cpp STATIC 
   tree-sitter-cpp/src/parser.c 
   tree-sitter-cpp/src/scanner.c 
 )
 target_include_directories(tree-sitter-cpp PUBLIC tree-sitter-cpp/src)
-#target_link_libraries(tree-sitter-cpp tree-sitter) 
-# set tree-sitter-c
+
+### SET tree-sitter-c
 add_library(tree-sitter-c STATIC 
   tree-sitter-c/src/parser.c 
 )
 target_include_directories(tree-sitter-c PUBLIC tree-sitter-c/src)
-#target_link_libraries(tree-sitter-c tree-sitter) 
+
 target_link_libraries(tree-lib tree-sitter)
 target_link_libraries(tree-lib tree-sitter-c)
 target_link_libraries(tree-lib tree-sitter-cpp)

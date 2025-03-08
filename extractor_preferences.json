@@ -1,0 +1,12 @@
+{
+    "threads": 1,
+    "minlen": 5,
+    "maxsize": 1000,
+    "lang": "c",
+    "dir": "VULNERABILITY_DETECTION/train",
+    "traversal": "root_terminal",
+    "token": "masked_identifiers",
+    "split": "ids_hash",
+    "outdir": "data",
+    "mapping": "VULNERABILITY_DETECTION/labels.csv"
+}

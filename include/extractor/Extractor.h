@@ -11,12 +11,15 @@
 #include <map>
 #include <ranges>
 #include <concepts>
+#include <set>
 #include <chrono>
 #include <unordered_map>
 #include <format>
+#include <nlohmann/json.hpp>
 
 namespace extractor
 {
+using json = nlohmann::json;
 
 /// Function that extracts all path-tokens
 /// @param file - path to source file
@@ -26,36 +29,62 @@ template <typename Parameters>
 void
 extract(const std::filesystem::path &file, const Parameters &params, const std::filesystem::path &tempDir)
 {
-    treesitter::Tree t(file, params.lang, params.traversal, params.token, params.split, params.minLen);
-    auto res = t.process();
+    treesitter::Tree t(file, params.lang);
+    auto res = t.process(params.traversal, params.token, params.split, params.minLen);
     if (res.size() > params.maxSize) {
         return;
     }
-    std::string line = file.filename().stem();
+    std::string line;
     for (const auto &v : res) {
-        line += " " + v;
+        line += v + " ";
     }
-    line += "\n";
+    line.back() = '\n';
 
     std::stringstream ss;
     ss << std::this_thread::get_id();
     auto id = ss.str();
 
     auto outFile = tempDir / "tokens" / (id + ".txt");
-
-    std::ofstream tempFile(outFile, std::ios::app);
-    tempFile << line;
-    tempFile.close();
-
-    auto outVocab = tempDir / "vocabs" / (id + ".txt");
-    std::ofstream tempVocab(outVocab, std::ios::app);
-    for (auto &[hash, tok] : t.vocab) {
-        tempVocab << "___[BOS]___ " << hash << " " << tok << "\n";
+    auto outSubs = tempDir / "submissions" / (id + ".txt");
+    auto outVocab = tempDir / "vocabs" / (id + ".json");
+    {
+        std::ofstream tempFile(outFile, std::ios::app);
+        tempFile << line;
+        tempFile.close();
     }
-    tempVocab.close();
+
+    {
+        std::ofstream tempFile(outSubs, std::ios::app);
+        tempFile << file.filename().string() << "\n";
+        tempFile.close();
+    }
+
+    json threadVocab = json::object();
+
+    {
+        if (std::filesystem::exists(outVocab)) {
+            std::ifstream tempVocab(outVocab);
+            tempVocab >> threadVocab;
+            tempVocab.close();
+        }
+    }
+
+    for (auto &[hash, tok] : t.vocab) {
+        threadVocab[std::to_string(hash)] = tok;
+    }
+
+    {
+        std::ofstream tempVocab(outVocab);
+        tempVocab << threadVocab.dump(4);
+        tempVocab.close();
+    }
 }
 
 /// Class that extracts path-tokens from files concurrently
+/// >> tokens.txt
+/// >> labels.txt
+/// >> submissions.txt
+/// >> mapping.json
 /// @brief - Uses threadpool
 class Extractor
 {
@@ -69,12 +98,14 @@ class Extractor
     {
         std::filesystem::path dirPath = params.dir;
         std::filesystem::path outDirPath = params.outdir;
+        std::filesystem::path labelsPath = params.mapping;
 
         auto dirName = dirPath.filename().stem();
         std::filesystem::path tokensDir = outDirPath / dirName;
         std::filesystem::create_directory(tokensDir);
         std::filesystem::create_directory(tokensDir / "temp");
         std::filesystem::create_directory(tokensDir / "temp" / "tokens");
+        std::filesystem::create_directory(tokensDir / "temp" / "submissions");
         std::filesystem::create_directory(tokensDir / "temp" / "vocabs");
 
         std::vector<std::filesystem::path> filePaths;
@@ -93,54 +124,75 @@ class Extractor
             }
         }
 
-        // unite all files with path-contexts into one
-        std::ofstream outFile(tokensDir /
-                              (params.traversal + "__" + params.token + "__" + params.split + "__tokens.txt"));
+        std::set<std::string> threadIDs;
         for (auto const &dir_entry : std::filesystem::directory_iterator{tokensDir / "temp" / "tokens"}) {
-            std::ifstream f(dir_entry.path());
-            outFile << f.rdbuf();
-            f.close();
+            threadIDs.insert(dir_entry.path().stem().string());
         }
-        outFile.close();
 
-        // create a vocabulary
-        std::unordered_map<std::string, std::string> globalVocab;
+        {
+            // unite all files with path-contexts into one
+            std::ofstream outFile(tokensDir / "tokens.txt");
+            for (auto const &threadID : threadIDs) {
+                std::ifstream f(tokensDir / "temp" / "tokens" / (threadID + ".txt"));
+                outFile << f.rdbuf();
+                f.close();
+            }
+            outFile.close();
+        }
+
+        {
+            // unite all files with submissions into one
+            std::ofstream outFile(tokensDir / "submissions.txt");
+            for (auto const &threadID : threadIDs) {
+                std::ifstream f(tokensDir / "temp" / "submissions" / (threadID + ".txt"));
+                outFile << f.rdbuf();
+                f.close();
+            }
+            outFile.close();
+        }
+        std::unordered_map<std::string, std::string> sub2label;
+
+        {
+            std::ifstream labelsVocab(labelsPath);
+            std::string line;
+            while (std::getline(labelsVocab, line)) {
+                auto arr = std::views::split(line, ',') | std::ranges::to<std::vector<std::string>>();
+                sub2label[arr[0]] = arr[1];
+            }
+            labelsVocab.close();
+        }
+
+        {
+            // unite all files with submissions into one
+            std::ofstream outFile(tokensDir / "labels.txt");
+            std::ifstream inFile(tokensDir / "submissions.txt");
+            std::string line;
+            while (std::getline(inFile, line)) {
+                outFile << sub2label[line] << "\n";
+            }
+            inFile.close();
+            outFile.close();
+        }
+
+        // create a global vocabulary
+        json globalVocab = json::object();
+
         for (auto const &dir_entry : std::filesystem::directory_iterator{tokensDir / "temp" / "vocabs"}) {
             std::ifstream f(dir_entry.path());
+            json tempJson = json::object();
 
-            std::string line;
-            std::string number;
-            std::string content;
-            while (std::getline(f, line, '\n')) {
-                std::stringstream lineStream(line);
-                std::string bos;
-                std::getline(lineStream, bos, ' ');
-                if (bos != "___[BOS]___") {
-                    content += "\n" + line;
-                } else {
-                    // begin of string
-                    if (!number.empty()) {
-                        globalVocab[number] = content;
-                    }
-                    std::getline(lineStream, number, ' ');
-                    std::getline(lineStream, content);
-                }
-            }
-
-            if (!number.empty()) {
-                globalVocab[number] = content;
-            }
-
+            f >> tempJson;
             f.close();
-        }
-        std::ofstream outVocab(tokensDir /
-                               (params.traversal + "__" + params.token + "__" + params.split + "__mapping.txt"));
-        outVocab << globalVocab.size() << "\n";
-        for (auto &[hash, tok] : globalVocab) {
-            outVocab << "___[BOS]___ " << hash << " " << tok << "\n";
-        }
 
-        outVocab.close();
+            for (auto &[key, value] : tempJson.items()) {
+                globalVocab[key] = value;
+            }
+        }
+        {
+            std::ofstream outVocab(tokensDir / "mapping.json");
+            outVocab << globalVocab.dump(4);
+            outVocab.close();
+        }
 
         std::filesystem::remove_all(tokensDir / "temp");
     }

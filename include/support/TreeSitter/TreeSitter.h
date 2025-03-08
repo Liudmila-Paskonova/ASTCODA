@@ -26,12 +26,24 @@ extern "C" {
 extern "C" const TSLanguage *tree_sitter_c();
 extern "C" const TSLanguage *tree_sitter_cpp();
 
+/// Struct that represents one token (row-column)
+struct Point {
+    uint32_t row = 0;
+    uint32_t column = 0;
+};
+
 /// Struct that represents one node
 struct TokenizedToken {
     /// grammar identifier of a node
     std::string id;
     /// value or grammar type (hashed)
     size_t name;
+
+    // ts_node_start_point
+    Point startPoint;
+
+    // ts_node_end_point
+    Point endPoint;
 };
 
 class TreeSitterNode
@@ -100,12 +112,12 @@ class Traversal
     static std::vector<std::vector<TSNode>> getAllNode2TerminalPaths(const TSNode &node, bool reverseArr = false);
 
   public:
-    /// A function to get all possible root-terminal @note sequences
+    /// A function to get all possible root-terminal sequences
     /// @param root the root of a tree
     /// @return vector of sequences of nodes
     static std::vector<std::vector<TSNode>> root2terminal(const TSNode &root);
 
-    /// A function to get all possible terminal-terminal @note sets
+    /// A function to get all possible terminal-terminal sets
     /// @param root the root of a tree
     /// @return vector of sequences of nodes
     static std::vector<std::vector<TSNode>> terminal2terminal(const TSNode &root);
@@ -119,7 +131,7 @@ class Traversal
 class Tokenizer
 {
   public:
-    /// A function that collects information (id, name) about a particular node
+    /// A function that collects information (id, name, start and end points) about a particular node
     /// @brief - remove comments (and other TreeSitter extra nodes)
     /// @brief - remove too short branches (e.g. #define, #include)
     /// @brief - all non-terminals don't have names
@@ -144,14 +156,20 @@ class Split
 {
   public:
     /// A function that converts a sequence of tokens to a string representing path from root to some token
-    /// @brief - each path from root to terminal is represented as <id><id><id><id>...<id>_<hash>
-    /// @brief - <id> is a 3-formatted grammar id of a node,
-    /// @brief - "_" is an underscore, which divides the path and the terminal,
-    /// @brief - <hash> is a hash value of a terminal
+    /// @brief - each path from root to terminal is represented as <id>_<id>_<id>_<id>...<id>_<hash>
+    /// @brief - <id> is a grammar id of a node,
+    /// @brief - "_" is an underscore, which divides nodes and the terminal,
+    /// @brief - <hash> is a hash value of a terminal,
     /// @param pathContext a vector of tokens to process
     /// @return a string representation of tokens in format idid...id_hash (e.g. 123423678_276187 implies a sequence of
     /// nodes "123", "423", "678" where "678" is a terminal with hash 276187)
     static std::string toBranch(const std::vector<TokenizedToken> &pathContext);
+
+    /// A function that finds the row and columns of the token
+    /// @brief - each token is the string <row>_<start_col>_<end_col>,
+    /// @param pathContext a vector of tokens to process
+    /// @return a string representation of tokens in format <row>_<start_col>_<end_col>
+    static std::string toPosition(const std::vector<TokenizedToken> &pathContext);
 };
 
 /// Mapping between options and language callables
@@ -174,22 +192,21 @@ static std::unordered_map<std::string, std::function<std::optional<std::vector<T
 
 /// Mapping between options and split callables
 static std::unordered_map<std::string, std::function<std::string(const std::vector<TokenizedToken> &)>> splitStrategy =
-    {
-        {"ids_hash", std::bind(&Split::toBranch, std::placeholders::_1)},
-};
+    {{"ids_hash", std::bind(&Split::toBranch, std::placeholders::_1)},
+     {"row_cols", std::bind(&Split::toPosition, std::placeholders::_1)}};
 
 /// Class that creates a TSTree from a given file and parses the input options to obtain the requested nodes'
 /// representation
 class Tree
 {
     /// A callable for tree traversal
-    std::function<std::vector<std::vector<TSNode>>(const TSNode &)> &traversal;
+    ///  std::function<std::vector<std::vector<TSNode>>(const TSNode &)> &traversal;
     /// A callable for nodes' tokenization
-    std::function<std::optional<std::vector<TokenizedToken>>(const std::vector<TSNode> &, const std::string &,
-                                                             std::unordered_map<size_t, std::string> &, size_t)>
-        &tokenizer;
+    /// std::function<std::optional<std::vector<TokenizedToken>>(const std::vector<TSNode> &, const std::string &,
+    ///                                                         std::unordered_map<size_t, std::string> &, size_t)>
+    ///    &tokenizer;
     /// A callable to split sequences of nodes
-    std::function<std::string(const std::vector<TokenizedToken> &)> &split;
+    ///  std::function<std::string(const std::vector<TokenizedToken> &)> &split;
 
     /// TreeSitter parser
     TSParser *parser;
@@ -205,6 +222,8 @@ class Tree
   public:
     /// A vocabulary storing mapping between hashes and the corresponding terminals' names
     std::unordered_map<size_t, std::string> vocab;
+    /// List of positions
+    std::vector<size_t> positions;
 
     /// Constructor to build a TSTree and set the requested callables
     /// @param fileName path to input file
@@ -212,12 +231,13 @@ class Tree
     /// @param traversalParam traversal option (the way we traverse tree and collect nodes)
     /// @param tokenizationParam tokenization option (the way we encode nodes)
     /// @param splitParam split option (the way we construct a path-context from sequence of nodes)
-    Tree(const std::string &fileName, const std::string &lang, const std::string &traversalParam,
-         const std::string &tokenizationParam, const std::string &splitParam, size_t minPathtokenLen);
+    Tree(const std::string &fileName, const std::string &lang);
 
     /// A function that applies the chosen callables to process an inner file in the right way
     /// @return a vector of strings representing one line in the resulting file
-    std::vector<std::string> process();
+    std::vector<std::string> process(const std::string &traversalParam, const std::string &tokenizationParam,
+                                     const std::string &splitParam, size_t minPathtokenLen,
+                                     const std::string &posParam = "row_cols");
 
     ~Tree();
 };
