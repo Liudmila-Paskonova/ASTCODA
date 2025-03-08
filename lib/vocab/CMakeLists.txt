@@ -4,3 +4,4 @@ target_include_directories(vocabulary PUBLIC
 )
 
 target_link_libraries(vocabulary PUBLIC support)
+target_link_libraries(vocabulary PRIVATE nlohmann_json::nlohmann_json)
