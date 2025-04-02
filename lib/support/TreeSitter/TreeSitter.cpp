@@ -317,6 +317,42 @@ treesitter::Tokenizer::defaultTokenization(const std::vector<TSNode> &nodes, con
     return res;
 }
 
+std::optional<std::vector<treesitter::TokenizedToken>>
+treesitter::Tokenizer::leavesOnly(const std::vector<TSNode> &nodes, const std::string &src,
+                                  std::unordered_map<size_t, std::string> &vocab, size_t min_pathtoken_len)
+{
+    // remove comments
+    if (ts_node_is_extra(nodes.back())) {
+        return std::nullopt;
+    }
+    // remove too short branches (e.g. #define ..., #include ...)
+    if (nodes.size() < min_pathtoken_len) {
+        return std::nullopt;
+    }
+    std::vector<TokenizedToken> res;
+
+    auto node = nodes.back();
+    std::string id = std::to_string(ts_node_grammar_symbol(node));
+
+    size_t name;
+    // terminal
+    std::string tempName;
+
+    size_t bytes = ts_node_end_byte(node) - ts_node_start_byte(node);
+    tempName = src.substr(ts_node_start_byte(node), bytes);
+
+    // add a terminal to vocabulary
+    name = std::hash<std::string>{}(tempName);
+
+    vocab[name] = tempName;
+    auto a = Point(ts_node_start_point(node).row, ts_node_start_point(node).column);
+    auto b = Point(ts_node_end_point(node).row, ts_node_end_point(node).column);
+
+    res.push_back(TokenizedToken(id, name, a, b));
+
+    return res;
+}
+
 std::string
 treesitter::Split::toBranch(const std::vector<TokenizedToken> &pathToken)
 {

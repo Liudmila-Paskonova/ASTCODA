@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <fstream>
 #include <sstream>
+#include <optional>
 
 namespace treesitter
 {
@@ -146,10 +147,23 @@ class Tokenizer
     static std::optional<std::vector<TokenizedToken>>
     defaultTokenization(const std::vector<TSNode> &node, const std::string &src,
                         std::unordered_map<size_t, std::string> &vocab, size_t min_pathtoken_len = 5);
+
+    /// A function that collects information (id, name, start and end points) about a particular leave
+    /// @brief - remove comments (and other TreeSitter extra nodes)
+    /// @brief - remove too short branches (e.g. #define, #include)
+    /// @brief - all terminals are passed by value (hashed)
+    /// @param node a given node
+    /// @param src file' context (required to extract exact values)
+    /// @param vocab a vocabulary that stores mapping between terminal names and their hashes
+    /// @return TokenizedToken
+    static std::optional<std::vector<TokenizedToken>> leavesOnly(const std::vector<TSNode> &node,
+                                                                 const std::string &src,
+                                                                 std::unordered_map<size_t, std::string> &vocab,
+                                                                 size_t min_pathtoken_len = 5);
 };
 
 /// Class that stores split strategies
-/// @brief - By that time each path-context (a sequence of tokenized tokens) is considered to be correct
+/// @brief - By this time each path-context (a sequence of tokenized tokens) is considered to be correct
 /// @brief - Methods from this class just decorate each path-context (e.g, make  a sequence of tokens be separated with
 /// ",")
 class Split
@@ -188,7 +202,8 @@ static std::unordered_map<std::string, std::function<std::optional<std::vector<T
     tokenizationRules = {
         {"masked_identifiers", std::bind(&Tokenizer::defaultTokenization, std::placeholders::_1, std::placeholders::_2,
                                          std::placeholders::_3, std::placeholders::_4)},
-};
+        {"word_based", std::bind(&Tokenizer::leavesOnly, std::placeholders::_1, std::placeholders::_2,
+                                 std::placeholders::_3, std::placeholders::_4)}};
 
 /// Mapping between options and split callables
 static std::unordered_map<std::string, std::function<std::string(const std::vector<TokenizedToken> &)>> splitStrategy =
