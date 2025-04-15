@@ -138,14 +138,14 @@ class FileArgument : public Argument
 /// Class to represent arguments that can be restricted with some range (number of threads, length etc.)
 /// @tparam T - a concrete type (only unsigned integral types are allowed)
 template <typename T = size_t>
-    requires(std::unsigned_integral<T>)
-class NaturalRangeArgument : public Argument
+    requires(std::integral<T> || std::floating_point<T>)
+class RangeArgument : public Argument
 {
     T minValue;
     T maxValue;
 
   public:
-    NaturalRangeArgument(const std::pair<T, T> &rangeBorders = {0, std::numeric_limits<T>::max()})
+    RangeArgument(const std::pair<T, T> &rangeBorders = {0, std::numeric_limits<T>::max()})
         : minValue(rangeBorders.first), maxValue(rangeBorders.second)
     {
     }
@@ -262,11 +262,11 @@ class Arguments
     /// @tparam sharg - short argument
     /// @tparam larg - long argument
     /// @param value - an object of the type @tparam T
-    /// @param obj - concrete Argument type (e.g. DirectoryArgument, NaturalRangeArgument etc.)
+    /// @param obj - concrete Argument type (e.g. DirectoryArgument, RangeArgument etc.)
     template <ShortArg sharg, typename T, template <typename> class Object>
         requires((std::is_arithmetic<T>() == true || std::same_as<T, std::string> || IsVector<T>) &&
                  (std::same_as<Object<T>, FileArgument<T>> || std::same_as<Object<T>, DirectoryArgument<T>> ||
-                  std::same_as<Object<T>, NaturalRangeArgument<T>> || std::same_as<Object<T>, ConstrainedArgument<T>> ||
+                  std::same_as<Object<T>, RangeArgument<T>> || std::same_as<Object<T>, ConstrainedArgument<T>> ||
                   std::same_as<Object<T>, UnconstrainedArgument<T>>) )
     void
     addParam(T &value, const Object<T> &obj)

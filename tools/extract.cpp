@@ -17,13 +17,13 @@ struct Parameters : public argparser::Arguments {
     {
         using namespace argparser;
 
-        addParam<"threads">(numThreads, NaturalRangeArgument<>({1, std::thread::hardware_concurrency()}));
-        addParam<"minlen">(minLen, NaturalRangeArgument<>({1, INT_MAX}));
-        addParam<"maxsize">(maxSize, NaturalRangeArgument<>({1, INT_MAX}));
+        addParam<"threads">(numThreads, RangeArgument<size_t>({1, std::thread::hardware_concurrency()}));
+        addParam<"minlen">(minLen, RangeArgument<size_t>({1, INT_MAX}));
+        addParam<"maxsize">(maxSize, RangeArgument<size_t>({1, INT_MAX}));
         addParam<"lang">(lang, ConstrainedArgument<std::string>({"c", "cpp"}));
         addParam<"dir">(dir, DirectoryArgument<std::string>());
         addParam<"traversal">(traversal, ConstrainedArgument<std::string>({"root_terminal", "terminal_terminal"}));
-        addParam<"token">(token, ConstrainedArgument<std::string>({"masked_identifiers"}));
+        addParam<"token">(token, ConstrainedArgument<std::string>({"masked_identifiers", "word_based"}));
         addParam<"split">(split, ConstrainedArgument<std::string>({"ids_hash"}));
         addParam<"outdir">(outdir, DirectoryArgument<std::string>(false));
         addParam<"mapping">(mapping, FileArgument<std::string>());

@@ -14,7 +14,7 @@ Eigen::MatrixXf loadMatrix(const std::filesystem::path &filePath, size_t rows, s
 
 std::unordered_map<std::string, Eigen::VectorXf> loadEmbeddings(const std::filesystem::path &filename);
 
-class CNNModel
+class ASTCODAModel
 {
 
     size_t kernelSize;
@@ -61,13 +61,13 @@ class CNNModel
     Eigen::MatrixXf fcBias;
 
   public:
-    CNNModel(const std::string &modelPath, size_t kernelSize, size_t embDim, size_t numFilters, size_t numLabels,
-             size_t numClasses, const std::string &lang, size_t minLen, float threshold, size_t paddingIdx = 0);
+    ASTCODAModel(const std::string &modelPath, size_t kernelSize, size_t embDim, size_t numFilters, size_t numLabels,
+                 size_t numClasses, const std::string &lang, size_t minLen, float threshold, size_t paddingIdx = 0);
 
     /// Function that processes one submission
     /// @param filePath - path to the submission
     /// @param domainIdx - domain which the submission belongs to
-    std::vector<size_t> run(const std::string &filePath, size_t domainIdx);
+    std::set<size_t> run(const std::string &filePath, size_t domainIdx);
 };
 
 } // namespace model

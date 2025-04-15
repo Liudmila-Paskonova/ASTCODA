@@ -5,8 +5,8 @@ add_executable(vocab vocabs.cpp)
 target_link_libraries(vocab PRIVATE  arg_parser vocabulary nlohmann_json::nlohmann_json)
 
 add_executable(evaluate evaluate.cpp)
-target_link_libraries(evaluate PRIVATE model arg_parser nlohmann_json::nlohmann_json)
+target_link_libraries(evaluate PRIVATE model arg_parser support nlohmann_json::nlohmann_json)
 
-#set(CMAKE_AUTOMOC ON)
-#add_executable(testmarker testmarker.cpp)
-#target_link_libraries(testmarker PRIVATE marker db tree_sitter arg_parser)
+set(CMAKE_AUTOMOC ON)
+add_executable(visualize visualize.cpp)
+target_link_libraries(visualize PRIVATE visualizer arg_parser)

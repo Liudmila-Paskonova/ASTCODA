@@ -61,9 +61,9 @@ model::loadEmbeddings(const std::filesystem::path &filename)
     return embeddings;
 }
 
-model::CNNModel::CNNModel(const std::string &modelPath, size_t kernelSize, size_t embDim, size_t numFilters,
-                          size_t numLabels, size_t numClasses, const std::string &lang, size_t minLen, float threshold,
-                          size_t paddingIdx)
+model::ASTCODAModel::ASTCODAModel(const std::string &modelPath, size_t kernelSize, size_t embDim, size_t numFilters,
+                                  size_t numLabels, size_t numClasses, const std::string &lang, size_t minLen,
+                                  float threshold, size_t paddingIdx)
     : modelPath(modelPath), kernelSize(kernelSize), embDim(embDim), numFilters(numFilters), numLabels(numLabels),
       numClasses(numClasses), lang(lang), minLen(minLen), threshold(threshold), paddingIdx(paddingIdx)
 {
@@ -84,8 +84,8 @@ model::CNNModel::CNNModel(const std::string &modelPath, size_t kernelSize, size_
     fcBias = loadMatrix(weightsFolder / "fc_biases.bin", numClasses * numDomains, 1);
 }
 
-std::vector<size_t>
-model::CNNModel::run(const std::string &filePath, size_t domainIdx)
+std::set<size_t>
+model::ASTCODAModel::run(const std::string &filePath, size_t domainIdx)
 {
     treesitter::Tree t(filePath, lang);
     auto tokens = t.process("root_terminal", "masked_identifiers", "ids_hash", minLen);
@@ -105,7 +105,12 @@ model::CNNModel::run(const std::string &filePath, size_t domainIdx)
     }
 
     for (auto &v : tokens) {
-        allEmb.segment(idx, embDim) = embeddings[v];
+        // get a pretrained embedding if exists, otherwise initialize it with "UNK"
+        if (embeddings.contains(v)) {
+            allEmb.segment(idx, embDim) = embeddings[v];
+        } else {
+            allEmb.segment(idx, embDim) = embeddings["@@UNK@@"];
+        }
         idx += embDim;
     }
 
@@ -190,13 +195,13 @@ model::CNNModel::run(const std::string &filePath, size_t domainIdx)
     Eigen::VectorXf logits = fcMatrix.block(numClasses * domainIdx, 0, numClasses, numFilters) * result +
                              fcBias.block(numClasses * domainIdx, 0, numClasses, 1);
 
-    std::vector<size_t> resultLines;
+    std::set<size_t> resultLines;
     if (logits(0) < logits(1)) {
         for (auto &ind : indices) {
-            resultLines.push_back(positions[ind]);
+            resultLines.insert(positions[ind]);
         }
     } else {
-        resultLines.push_back(0);
+        resultLines.insert(0);
     }
     return resultLines;
 }

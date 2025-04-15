@@ -1,29 +1,41 @@
 #include <model/Model.h>
 #include <iostream>
+#include <string>
 #include <support/ArgParser/ArgParser.h>
+#include <support/Support/Support.h>
+#include <filesystem>
+#include <map>
 
 struct Parameters : public argparser::Arguments {
     size_t embDim;
     size_t kernelSize;
     size_t numFilters;
-    std::vector<std::string> domainClasses;
     std::string pathDomainIdx;
+    std::string pathLabelIdx;
     std::string pathTestX;
-    std::string pathTestSub;
+    std::string pathTestY;
     std::string pathModel;
+    std::string lang;
+    std::string outPath;
+    size_t minLen;
+    double threshold;
 
     Parameters()
     {
         using namespace argparser;
 
-        addParam<"embedding_dim">(embDim, NaturalRangeArgument<>({1, INT_MAX}));
-        addParam<"kernel_size">(kernelSize, NaturalRangeArgument<>({1, INT_MAX}));
-        addParam<"num_filters">(numFilters, NaturalRangeArgument<>({1, INT_MAX}));
-        addParam<"domain_classes">(domainClasses, UnconstrainedArgument<std::vector<std::string>>());
+        addParam<"test_x">(pathTestX, DirectoryArgument<std::string>());
+        addParam<"test_y">(pathTestY, FileArgument<std::string>());
+        addParam<"label_to_idx">(pathLabelIdx, FileArgument<std::string>());
         addParam<"domain_to_idx">(pathDomainIdx, FileArgument<std::string>());
-        addParam<"test_x">(pathTestX, FileArgument<std::string>());
-        addParam<"test_sub">(pathTestSub, FileArgument<std::string>());
-        addParam<"model_path">(pathModel, FileArgument<std::string>());
+        addParam<"embedding_dim">(embDim, RangeArgument<size_t>({1, INT_MAX}));
+        addParam<"kernel_size">(kernelSize, RangeArgument<size_t>({1, INT_MAX}));
+        addParam<"num_filters">(numFilters, RangeArgument<size_t>({1, INT_MAX}));
+        addParam<"weights_path">(pathModel, DirectoryArgument<std::string>());
+        addParam<"lang">(lang, ConstrainedArgument<std::string>({"c", "cpp"}));
+        addParam<"minlen">(minLen, RangeArgument<size_t>({1, INT_MAX}));
+        addParam<"threshold">(threshold, RangeArgument<double>({-1.0, 1.0}));
+        addParam<"chosen_lines">(outPath, FileArgument<std::string>(false));
     }
 };
 
@@ -37,32 +49,53 @@ main(int argc, char *argv[])
         size_t embDim = params.embDim;
         size_t kernelSize = params.kernelSize;
         size_t numFilters = params.numFilters;
-        size_t numClasses = params.domainClasses.size();
 
-        std::ifstream domain2idx(params.pathDomainIdx);
+        // read domains
+        std::map<std::string, size_t> domain2idx;
+        std::ifstream domain2idxFile(params.pathDomainIdx);
         std::string line;
         size_t numDomains = 0;
-        while (std::getline(domain2idx, line)) {
-            ++numDomains;
+        while (std::getline(domain2idxFile, line)) {
+            domain2idx[line] = numDomains++;
         }
-        domain2idx.close();
+        domain2idxFile.close();
 
-        std::ifstream f(params.pathTestSub);
-        std::string sub;
+        // read labels
+        std::ifstream label2idxFile(params.pathLabelIdx);
+        size_t numLabels = 0;
+        while (std::getline(label2idxFile, line)) {
+            ++numLabels;
+        }
+        label2idxFile.close();
 
-        model::CNNModel mod(params.pathModel, kernelSize, embDim, numFilters, numClasses * numDomains, numClasses, "c",
-                            0, 0.8);
+        // read csv
+        std::map<std::string, size_t> y2domain;
+        std::ifstream testY(params.pathTestY);
 
-        while (std::getline(f, sub)) {
-            auto filePath = params.pathTestX + sub;
-            auto vec = mod.run(filePath, 0);
-            std::cout << sub;
+        while (std::getline(testY, line)) {
+            auto li = support::splitLine(line, ',');
+            auto dom = support::splitLine(li[1], '_');
+            y2domain[li[0]] = domain2idx[dom[0]];
+        }
+        testY.close();
+
+        model::ASTCODAModel mod(params.pathModel, kernelSize, embDim, numFilters, numLabels, numLabels / numDomains,
+                                params.lang, params.minLen, params.threshold);
+
+        std::filesystem::path testFolder = params.pathTestX;
+        std::ofstream outFile(params.outPath);
+        for (auto const &fileEntry : std::filesystem::directory_iterator{testFolder}) {
+            auto fname = fileEntry.path().filename().string();
+
+            auto vec = mod.run(fileEntry.path().string(), y2domain[fname]);
+
+            outFile << fname;
             for (auto &v : vec) {
-                std::cout << " " << v;
+                outFile << " " << v;
             }
-            std::cout << std::endl;
+            outFile << "\n";
         }
-        f.close();
+        outFile.close();
 
     } catch (const char *err) {
         std::cerr << err << std::endl;

@@ -10,7 +10,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # find_package(SQLite3 REQUIRED)
-# find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(Eigen3 3.4 REQUIRED NO_MODULE)
 find_package(nlohmann_json REQUIRED)
 find_package(Threads REQUIRED)
