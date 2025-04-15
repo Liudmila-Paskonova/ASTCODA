@@ -1,0 +1,14 @@
+{
+    "tokens_path": "example/train/tokens.txt",
+    "embedding_dim": 384,
+    "window": 15,
+    "min_count": 1,
+    "epochs": 10,
+    "hs": 0,
+    "workers": 1,
+    "sg": 1,
+    "negative": 15,
+    "sample": 0.00006,
+    "seed": 42,
+    "out_dir": "example/token2vec"
+}

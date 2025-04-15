@@ -1,0 +1,14 @@
+{
+    "test_x": "AI_DETECTION_SMALL/test",
+    "test_y": "AI_DETECTION_SMALL/labels.csv",
+    "label_to_idx": "example/label_to_idx.txt",
+    "domain_to_idx": "example/domain_to_idx.txt",
+    "embedding_dim": 384,
+    "kernel_size": 15,
+    "num_filters": 128,
+    "weights_path": "example/model/model_k15_nf128_e384/weights",
+    "chosen_lines": "example/chosen_lines.txt",
+    "lang": "c",
+    "minlen": 1,
+    "threshold": 0.5
+}
