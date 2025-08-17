@@ -1,0 +1,494 @@
+[
+  {
+    "problem": "p03162",
+    "filename": "s080504717.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02732",
+    "filename": "s010788744.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02641",
+    "filename": "s048128714.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02684",
+    "filename": "s025920475.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02629",
+    "filename": "s153539634.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02642",
+    "filename": "s175350177.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02732",
+    "filename": "s143269011.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      18
+    ],
+    "reason": [
+      "the multiplication a[i]*(a[i]-1) is performed in 32-bit int causing overflow before casting to long long"
+    ]
+  },
+  {
+    "problem": "p02696",
+    "filename": "s112877031.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      12,
+      18
+    ],
+    "reason": [
+      "declares A, B, N as double instead of integer types, leading to precision errors and incorrect arithmetic",
+      "loops x from 0 to b instead of up to N, so it evaluates the expression over the wrong range"
+    ]
+  },
+  {
+    "problem": "p02761",
+    "filename": "s196753453.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02705",
+    "filename": "s285269319.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02732",
+    "filename": "s287645720.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02761",
+    "filename": "s164111479.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      19,
+      26,
+      32
+    ],
+    "reason": [
+      "the code incorrectly prints -1 when all specified digits are zero or there are no constraints, even though a valid number may exist",
+      "it searches for the first non‑zero digit to determine the leading position, ignoring that the leading digit may be zero or must be set to 1 when unspecified",
+      "it outputs only the digits from the first non‑zero position to the end, omitting required leading digits and producing a number with fewer than N digits"
+    ]
+  },
+  {
+    "problem": "p02922",
+    "filename": "s191672447.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      5,
+      6
+    ],
+    "reason": [
+      "initializes socket count to a instead of the required starting 1 socket",
+      "initializes strip count to 1 instead of 0, causing an off‑by‑one error"
+    ]
+  },
+  {
+    "problem": "p02623",
+    "filename": "s180336410.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      28,
+      42,
+      43
+    ],
+    "reason": [
+      "initializes prefix sum a[0] with A[0] instead of 0, causing off‑by‑one counting of books from stack A",
+      "sets j = M, which is outside the valid index range of array b (maximum index is M‑1)",
+      "accesses b[j] while j may be equal to M, leading to out‑of‑bounds array access and incorrect loop condition"
+    ]
+  },
+  {
+    "problem": "p02642",
+    "filename": "s295976724.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      8,
+      21
+    ],
+    "reason": [
+      "vector a is sized with uninitialized n before reading input, so the array has incorrect size",
+      "the condition a.at(j)%a.at(j)==0 is always true; it should compare a.at(i)%a.at(j)==0 to check divisibility"
+    ]
+  },
+  {
+    "problem": "p02718",
+    "filename": "s314657783.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      27
+    ],
+    "reason": [
+      "Computes the threshold with integer division (su/=4*m), losing precision and leading to incorrect comparisons"
+    ]
+  },
+  {
+    "problem": "p03160",
+    "filename": "s397046355.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02584",
+    "filename": "s306966319.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      9,
+      14,
+      26,
+      28
+    ],
+    "reason": [
+      "uses ifstream to read from \"input.txt\" instead of standard input",
+      "multiplies k and d causing 64‑bit overflow when checking k*d<=x",
+      "multiplies k and d causing overflow in the negative‑x branch",
+      "computes x-k*d for negative x, giving an incorrect sign for the final coordinate"
+    ]
+  },
+  {
+    "problem": "p02742",
+    "filename": "s400590263.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p03165",
+    "filename": "s304430538.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      37,
+      38
+    ],
+    "reason": [
+      "line 37 uses a loop that only checks n, so after the inner loop finishes the outer loop may never terminate",
+      "line 38 nests a second loop on m, resulting in incorrect LCS reconstruction logic and possible infinite looping"
+    ]
+  },
+  {
+    "problem": "p02629",
+    "filename": "s410474251.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02572",
+    "filename": "s399454713.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      23
+    ],
+    "reason": [
+      "multiplication A[i]*score[i] may overflow 64-bit integer before modulo"
+    ]
+  },
+  {
+    "problem": "p02659",
+    "filename": "s482212390.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      4,
+      7
+    ],
+    "reason": [
+      "declares A as int, which overflows for values up to 10^15",
+      "computes c and d as int, causing overflow for 100*a and truncating 100*b, losing precision"
+    ]
+  },
+  {
+    "problem": "p02714",
+    "filename": "s407470758.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      62
+    ],
+    "reason": [
+      "the loop bound for 'bef' (distance) is too small, so some equally spaced triples are not checked and not subtracted"
+    ]
+  },
+  {
+    "problem": "p02732",
+    "filename": "s535670447.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      17
+    ],
+    "reason": [
+      "Recomputes the total number of equal pairs by iterating over the entire map for each element, resulting in O(N^2) time and causing a timeout."
+    ]
+  },
+  {
+    "problem": "p02761",
+    "filename": "s514963378.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      31
+    ],
+    "reason": [
+      "the expression `cout << (i == 0) ? 1 : 0;` is parsed as `(cout << (i == 0)) ? 1 : 0` due to operator precedence, so no digit is printed and the default leading digit is set to 1 even when N=1, violating the problem’s minimality requirement"
+    ]
+  },
+  {
+    "problem": "p02983",
+    "filename": "s437647433.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      17,
+      18,
+      19
+    ],
+    "reason": [
+      "line 17 reduces l modulo 2019, discarding the original range needed for correct logic",
+      "line 18 reduces r modulo 2019, similarly losing necessary information",
+      "line 19 uses the condition l>r to set answer to 0, which is incorrect; the zero answer should be based on the original range length (R‑L ≥ 2019)"
+    ]
+  },
+  {
+    "problem": "p03160",
+    "filename": "s608131586.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02761",
+    "filename": "s612531088.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02623",
+    "filename": "s614798476.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02641",
+    "filename": "s619152779.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      26,
+      30
+    ],
+    "reason": [
+      "Line 26 computes the distance with `abs(x-i)` (off‑by‑one) and compares it to `p2[j]` instead of the candidate’s distance, so the selection logic is wrong",
+      "Line 30 uses the unrelated condition `x+i == p2[j]`, which does not reflect the required closest‑distance check"
+    ]
+  },
+  {
+    "problem": "p02742",
+    "filename": "s680418707.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      27
+    ],
+    "reason": [
+      "the computation of sum on line 27 does not handle the case when H or W equals 1, causing an overcount of reachable cells"
+    ]
+  },
+  {
+    "problem": "p02983",
+    "filename": "s690024814.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02705",
+    "filename": "s722130810.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02572",
+    "filename": "s685259062.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      67,
+      69
+    ],
+    "reason": [
+      "ans is used without initialization, leading to undefined value",
+      "multiplication a[i]*(pre[i]-a[i]) may overflow 64-bit before applying modulo"
+    ]
+  },
+  {
+    "problem": "p02714",
+    "filename": "s744774182.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      12,
+      28
+    ],
+    "reason": [
+      "incorrect scanf format specifier \"%ud\" does not correctly read the unsigned long N",
+      "printf uses \"%lld\" which mismatches the unsigned long long count type"
+    ]
+  },
+  {
+    "problem": "p02714",
+    "filename": "s766071185.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02623",
+    "filename": "s685720839.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      13,
+      14
+    ],
+    "reason": [
+      "the loop uses a greedy interleaving approach instead of the required prefix‑sum two‑pointer method, leading to suboptimal book counts",
+      "the computation of xa and xb with fallback to the other stack’s next value creates an incorrect selection criterion"
+    ]
+  },
+  {
+    "problem": "p02983",
+    "filename": "s836798283.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p03163",
+    "filename": "s725336764.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      17,
+      110
+    ],
+    "reason": [
+      "`ll` is defined as `int`, which overflows when accumulating weights or values up to 1e11",
+      "the loop uses `(1<<n)` to enumerate subsets, which is exponential and overflows for n up to 100, making the algorithm incorrect"
+    ]
+  },
+  {
+    "problem": "p02705",
+    "filename": "s848871467.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02629",
+    "filename": "s808921224.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      12
+    ],
+    "reason": [
+      "off‑by‑one error in computing the next character; the code uses 'a' + a % 26 - 1 without decrementing a, causing incorrect letters for multiples of 26"
+    ]
+  },
+  {
+    "problem": "p02743",
+    "filename": "s902354648.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      52
+    ],
+    "reason": [
+      "Floating-point comparison may be inaccurate; should avoid using sqrt directly and compare using integer arithmetic to ensure exactness"
+    ]
+  },
+  {
+    "problem": "p02718",
+    "filename": "s912061974.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      54
+    ],
+    "reason": [
+      "uses integer division for the threshold, losing required precision for the comparison"
+    ]
+  },
+  {
+    "problem": "p02742",
+    "filename": "s930048589.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      14
+    ],
+    "reason": [
+      "uses integer division H*W/2 without accounting for odd total cells, undercounting reachable squares"
+    ]
+  },
+  {
+    "problem": "p02742",
+    "filename": "s964398469.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      5,
+      7
+    ],
+    "reason": [
+      "uses double types for h and w causing precision loss and inability to handle large integer values",
+      "computes (h*w)/2 which floors the result and misses the required ceil for odd cell counts and the special case when H==1 or W==1"
+    ]
+  },
+  {
+    "problem": "p02642",
+    "filename": "s747425000.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      167,
+      175,
+      187
+    ],
+    "reason": [
+      "line 167 incorrectly uses add_factor on the whole number, causing numbers to be marked non‑unique based on shared factors rather than actual array elements",
+      "line 175 adds each prime divisor to the factor set and treats a shared prime factor as evidence of divisibility, which is wrong for the problem",
+      "line 187 adds the remaining prime factor after the loop and similarly misclassifies numbers based on shared factors"
+    ]
+  },
+  {
+    "problem": "p02616",
+    "filename": "s836980203.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      75
+    ],
+    "reason": [
+      "chooses the replacement product using max on modulo values, which does not reflect the true ordering of the actual products"
+    ]
+  }
+]

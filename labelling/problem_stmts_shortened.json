@@ -1,0 +1,125 @@
+[
+    {
+        "problem": "p02642",
+        "stmt": "Given an array A of N integers, count how many elements are not divisible by any other element in the array (excluding themselves). 1 <= N <= 2*10^5. 1 <= A_i <= 10^6" 
+    },
+    {
+        "problem": "p03162",
+        "stmt": "Given an array of N rows and 3 columns, where each row i contains integers a_i, b_i, and c_i, representing the value of three possible choices on step i. On each step i, choose exactly one of a_i, b_i, or c_i, but the same choice cannot be made on two consecutive steps. What is the maximum sum that can be obtained? 1 <= N <= 10^5. 1 <= a_i, b_i, c_i <= 10^4"
+    },
+    {
+        "problem": "p02802",
+        "stmt": "Given M submissions to N problems, each submission i consists of a problem number p_i and a verdict S_i (AC or WA). A problem is considered solved if it has at least one AC. The penalty for a solved problem is the number of WAs made before the first AC for that problem. Find the total number of solved problems and the total number of penalties. 1 <= N <= 10^5. 0 <= M <= 10^5. 1 <= p_i <= N. S_i in {AC, WA}."
+    },
+    {
+        "problem": "p02684",
+        "stmt": "Given an array A of size N where A[i] indicates the destination town when using the teleporter in town i (numeration in A starts with 1), determine the town reached after exactly K teleports starting from town 1. 2 <= N <= 10^5. 1 <= A_i <= N. 1 <= K <= 10^18."
+    },
+    {
+        "problem": "p02947",
+        "stmt": "Given N distinct lowercase English strings of length 10, count the number of index pairs (i, j) where 1 ≤ i < j ≤ N such that s_i is an anagram of s_j. 2 <= N <= 10^5."
+    },
+    {
+        "problem": "p02641",
+        "stmt": "Given an integer X and a list of N distinct integers p_1, ..., p_N, find the integer not in the list that is closest to X (i.e., with the smallest absolute difference). If multiple such integers exist, return the smallest one. 1 <= X <= 100. 0 <= N <= 100. 1 <= p_i <= 100"
+    },
+    {
+        "problem": "p02743",
+        "stmt": "Given integers a, b and c, determine whether the inequality sqrt{a} + sqrt{b} < sqrt{c} holds. Print Yes or No. 1 <= a, b, c <= 10^9"
+    },
+    {
+        "problem": "p02623",
+        "stmt": "Given two stacks of books: Stack A with N books, where reading the i-th book from the top takes A_i minutes, and Stack B with M books, where reading the i-th book from the top takes B_i minutes. You can read books by repeatedly choosing the top book from either stack. What is the maximum number of books you can read within a total of K minutes?. 1 <= N, M <= 2*10^5. 1 <= K <= 10^9. 1 <= A_i, B_i <= 10^9."
+    },
+    {
+        "problem": "p03160",
+        "stmt": "Given N stones with heights h_1, h_2, ..., h_N, a frog starts on Stone 1 and wants to reach Stone N. From Stone i, it can jump to Stone i+1 or i+2, incurring a cost of |h_i - h_j| for the jump. Find the minimum total cost to reach Stone N. 2 <= N <= 10^5. 1 <= h_i <= 10^4."
+    },
+    {
+        "problem": "p03165",
+        "stmt": "Given two lowercase English strings s and t, find one longest common subsequence (LCS) — a longest string that is a subsequence of both s and t. 1 <= |s|, |t| <= 3000"
+    },
+    {
+        "problem": "p03163",
+        "stmt": "Given N items each with weight w_i and value v_i, and a knapsack capacity W, find the maximum total value of a subset of items whose total weight does not exceed W. 1 <= N <= 100. 1 <= W <= 10^5. 1 <= w_i <= W. 1 <= v_i <= 10^9."
+    },
+    {
+        "problem": "p02714",
+        "stmt": "Given a string S of length N consisting of R, G and B, find the number of triples (i, j, k), 1<=i<j<k<=N such that: 1) S_i != S_j, S_i != S_k, S_j != S_k; 2) (j - i) != (k - j). 1 <= N <= 4000"
+    },
+    {
+        "problem": "p02761",
+        "stmt": "Given integers N, M and then M integer pairs (s_i, c_i), find the smallest integer K >=0 such that: 1) K has exactly N digits in base ten. O is 1-digit, for other integers leading zeros are omitted. 2) the s_i-th digit from the left is c_i for all i. 1 <= N <= 3. 0 <= M <= 5. 1 <= s_i <= N. 0 <= c_i <= 9"
+    },
+    {
+        "problem": "p02732",
+        "stmt": "Given an integer array A of size N, for each k = 1..N find the number of ways to choose A_i and A_j (i != j, j != k, i != k, i and j in disregarding order) so that A_i = A_j. 3 <= N <= 2 * 10^5. 1 <= A_i <= N."
+    },
+    {
+        "problem": "p02983",
+        "stmt": "Given two non-negative integers L and R, find the minimum possible value of (i * j) mod 2019 (L <= i < j <= R). 0 <= L < R <= 2 * 10^9"
+    },
+    {
+        "problem": "p02742",
+        "stmt": "Given two integers H and W, representing the dimensions of a grid, compute how many cells a bishop placed at the top-left corner (1,1) can reach (including its starting cell) using any number of diagonal moves. 1 <= H, W <= 10^9."
+    },
+    {
+        "problem": "p03161",
+        "stmt": "Given integers N, K and an integer array H[1…N] of heights, a frog starts on stone 1 and wants to reach stone N. From stone i it may jump (i + 1), (i + 2)... (i + k), each jump costing |H[i] - H[j]|. Compute the minimum total cost to reach stone N. 2 <= N <= 10^5. 1 <= K <= 100. 1 <= h_i <= 10^4."
+    },
+    {
+        "problem": "p02629",
+        "stmt": "Given an integer N, consider the infinite sequence of all non-empty lowercase strings sorted first by length then lexicographically: a, b, …, z, aa, ab, …, zz, aaa, …. Output the N-th string in this sequence. 1 <= N <= 1000000000000001."
+    },
+    {
+        "problem": "p02659",
+        "stmt": "Compute A * B, truncate its fractional part, and print the result as an integer. 0 <= A <= 10^15. 0 <= B < 10. A is integer. B is a number with two digits after the decimal point."
+    },
+    {
+        "problem": "p02705",
+        "stmt": "Print the circumference of a circle of radius R. 1 <= R <= 100. R is integer. Your output is considered correct if and only if its absolute or relative error from our answer is at most 10^{-2}."
+    },
+    {
+        "problem": "p03164",
+        "stmt": "Given N items each with weight w_i and value v_i, and a knapsack capacity W, find the maximum total value of a subset of items whose total weight does not exceed W. 1 <= N <= 100. 1 <= W <= 10^9. 1 <= w_i <= W. 1 <= v_i <= 10^3."
+    },
+    {
+        "problem": "p02584",
+        "stmt": "Given integers X, K, D, you start at coordinate X on the number line and make exactly K moves of length D, each move choosing +D or -D. Compute the smallest possible absolute value of your final coordinate. -10^15 <= X <= 10^15. 1 <= K <= 10^15. 1 <= D <= 10^15."
+    },
+    {
+        "problem": "p02900",
+        "stmt": "Given two positive integers A and B, select a set of positive common divisors of A and B such that any two chosen divisors are coprime, and output the maximum size of such a set. 1 <= A, B <= 10^{12}"
+    },
+    {
+        "problem": "p02754",
+        "stmt": "Given three integers N, A, and B, the following operation is repeated many times: place A blue balls at the end of the row of balls already placed, then, place B red balls at the end of the row. How many blue balls will be there among the first N balls in the row of balls made this way? 1 <= N <= 10^{18}. A, B >= 0. 0 < A + B <= 10^{18}."
+    },
+    {
+        "problem": "p02718",
+        "stmt": "Given integers N, M and an integer array A of size N, the goal is to select M items A_i such that A_i >= 1 / (4 * M) * sum_elements(A). If it's possible, print Yes, otherwise print No. 1 <= M, N <= 100. 1 <= A_i <= 1000. A_i are distinct."
+    },
+    {
+        "problem": "p02658",
+        "stmt": "Given N integers A_1, ..., A_N, compute A_1 * ... * A_N. If the result exceeds 10^{18}, print -1 instead. 2 <= N <= 10^5. 0 <= A_i <= 10^{18}"
+    },
+    {
+        "problem": "p02922",
+        "stmt": "Given integers A and B, you start with 1 socket. Each power strip has A outlets: using one strip replaces 1 socket with A, for a net gain of A-1 sockets. Find the minimum number of strips k needed so that you have at least B sockets. 2 <= A <= 20. 1 <= B <= 20."
+    },
+    {
+        "problem": "p02696",
+        "stmt": "Given integers A, B, and N, find the maximum possible value of floor(A * x / B) - A * floor(x / B) for a non-negative integer x not greater than N. Here floor(t) denotes the greatest integer not greater than the real number t. 1 <= A <= 10^6. 1 <= B <= 10^{12}. 1 <= N <= 10^{12}"
+    },
+    {
+        "problem": "p02572",
+        "stmt": "Given N integers A_1,...,A_N, find the sum of A_i * A_j over all pairs (i,j) such that 1 <= i < j <= N, modulo (10^9+7). 2 <= N <= 2 * 10^5. 0 <= A_i <= 10^9."
+    },
+    {
+        "problem": "p02616",
+        "stmt": "Given integers N, K and N integers A_1,...,A_N, find the maximum possible product of the K chosen elements. Print the maximum product modulo (10^9+7), using an integer between 0 and 10^9+6 (inclusive). 1 <= K <= N <= 2 * 10^5. |A_i| <= 10^9."
+    }
+]
+
+
+

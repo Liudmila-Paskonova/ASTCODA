@@ -1,0 +1,536 @@
+[
+  {
+    "problem": "p02732",
+    "filename": "s010788744.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02684",
+    "filename": "s025920475.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02641",
+    "filename": "s048128714.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p03162",
+    "filename": "s080504717.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02629",
+    "filename": "s153539634.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02642",
+    "filename": "s175350177.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02761",
+    "filename": "s196753453.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02705",
+    "filename": "s285269319.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02732",
+    "filename": "s287645720.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p03160",
+    "filename": "s397046355.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02742",
+    "filename": "s400590263.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02629",
+    "filename": "s410474251.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p03160",
+    "filename": "s608131586.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02761",
+    "filename": "s612531088.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02623",
+    "filename": "s614798476.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02983",
+    "filename": "s690024814.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02705",
+    "filename": "s722130810.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02714",
+    "filename": "s766071185.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02983",
+    "filename": "s836798283.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02705",
+    "filename": "s848871467.cpp",
+    "verdict": "OK",
+    "error_lines": [],
+    "reason": []
+  },
+  {
+    "problem": "p02732",
+    "filename": "s143269011.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      11,
+      13
+    ],
+    "reason": [
+      "The formula for counting pairs is incorrect - it should be a[i]*(a[i]-1)/2 but the logic doesn't account for removing the current element from consideration",
+      "The output calculation is wrong - it subtracts a[v[i]] and adds 1, but this doesn't correctly compute the number of valid pairs excluding the current element"
+    ]
+  },
+  {
+    "problem": "p02623",
+    "filename": "s180336410.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      25,
+      26,
+      27
+    ],
+    "reason": [
+      "Loop variable j is initialized to M instead of M-1, causing out-of-bounds access",
+      "The while loop condition checks b[j] which may be undefined when j becomes negative",
+      "The increment of ans is incorrect as it adds i+j+2 instead of the correct count of books read"
+    ]
+  },
+  {
+    "problem": "p02761",
+    "filename": "s164111479.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "reason": [
+      "The code does not handle the case when the first digit is 0 correctly",
+      "The code does not properly initialize the answer array for all positions",
+      "The code does not check if the first digit can be 0 when it's not constrained",
+      "The code does not ensure that leading zeros are handled correctly in the output",
+      "The code does not properly validate that a valid number can be formed with the given constraints",
+      "The code does not consider that the first digit cannot be 0 unless explicitly allowed by constraints",
+      "The code does not handle the case where no valid number exists due to conflicting constraints",
+      "The code does not properly check for conflicts between different digit constraints",
+      "The code does not ensure that all positions are filled correctly when some are unconstrained",
+      "The code does not properly manage the logic for determining the minimum valid number",
+      "The code does not account for the fact that a number with leading zeros is not valid unless it's just 0",
+      "The code does not handle the case where we need to construct a number with exactly N digits",
+      "The code does not ensure that the constructed number has exactly N digits",
+      "The code does not properly manage the output format for the final result",
+      "The code does not correctly implement the logic to find the minimum valid number"
+    ]
+  },
+  {
+    "problem": "p02922",
+    "filename": "s191672447.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      5,
+      6
+    ],
+    "reason": [
+      "The loop condition checks 'first < b' but the break statement inside the loop checks 'first >= b', creating a logical inconsistency",
+      "The increment logic is incorrect because it adds 'a-1' to 'first' but doesn't properly account for the fact that each strip increases the number of sockets by 'a-1' from the previous total"
+    ]
+  },
+  {
+    "problem": "p02642",
+    "filename": "s295976724.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "reason": [
+      "Loop runs from j=i-1 to n, causing out-of-bounds access when i=0",
+      "Loop condition j<n allows j to exceed array bounds",
+      "Checking divisibility by itself (a.at(j)%a.at(j)==0) is always true and incorrect logic",
+      "Break statement inside inner loop prevents proper checking of all elements",
+      "Incorrect logic for counting non-divisible elements",
+      "Wrong condition for checking duplicate elements"
+    ]
+  },
+  {
+    "problem": "p03165",
+    "filename": "s304430538.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "reason": [
+      "The while loop condition n>=1 will cause out-of-bounds access when n becomes 0",
+      "The while loop condition m>=1 will cause out-of-bounds access when m becomes 0",
+      "The logic for backtracking in the LCS reconstruction is incorrect and leads to wrong character selection",
+      "The condition dp[n][m]==dp[n-1][m] should check if dp[n][m] equals dp[n-1][m] but it's checking dp[n-1][m] which may be undefined",
+      "The condition dp[n][m]==dp[n][m-1] should check if dp[n][m] equals dp[n][m-1] but it's checking dp[n][m-1] which may be undefined",
+      "The final character is appended to the result string in wrong order due to incorrect backtracking logic"
+    ]
+  },
+  {
+    "problem": "p02584",
+    "filename": "s306966319.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "reason": [
+      "Line 12 uses modulo operator on k and k1 which can cause incorrect parity check when k1 is negative",
+      "Line 13 has incorrect logic for determining final position when parities match",
+      "Line 14 has incorrect logic for determining final position when parities don't match",
+      "Line 15 has incorrect logic for handling positive x case",
+      "Line 16 has incorrect logic for handling negative x case",
+      "Line 17 has incorrect logic for determining final position when parities match in negative case",
+      "Line 18 has incorrect logic for determining final position when parities don't match in negative case",
+      "Line 19 has incorrect calculation for k1 in negative case",
+      "Line 20 has incorrect handling of the case where we can reach the origin",
+      "Line 21 has incorrect handling of the case where we can reach the origin",
+      "Line 22 has incorrect final output logic",
+      "Line 23 has incorrect final output logic"
+    ]
+  },
+  {
+    "problem": "p02718",
+    "filename": "s314657783.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      15,
+      17
+    ],
+    "reason": [
+      "Integer division truncates the result, causing incorrect threshold calculation",
+      "Comparison uses incorrect threshold value due to integer division truncation"
+    ]
+  },
+  {
+    "problem": "p02572",
+    "filename": "s399454713.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ],
+    "reason": [
+      "The loop for calculating score[i] runs in O(N^2) time complexity which is too slow for N = 2*10^5",
+      "The modulo operation on score[i] is applied after the inner loop but before the multiplication, causing incorrect results",
+      "The calculation of score[i] does not properly handle modular arithmetic during accumulation",
+      "The final answer calculation does not use proper modular arithmetic to prevent overflow",
+      "The variable n is defined as 10^10 + 7 instead of 10^9 + 7 which is the required modulo value",
+      "The loop bounds and conditions for calculating score[i] are incorrect leading to wrong accumulation",
+      "The modulo operation on score[i] should be applied during accumulation, not after",
+      "The calculation of ANS does not properly handle modular arithmetic throughout the computation",
+      "The variable n is declared as long but should be long long for proper overflow handling",
+      "The final output does not ensure correct modular arithmetic in all operations",
+      "The inner loop for calculating score[i] is inefficient and causes time limit exceeded",
+      "The overall algorithmic approach is inefficient and needs optimization to O(N) complexity"
+    ]
+  },
+  {
+    "problem": "p02714",
+    "filename": "s407470758.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      29,
+      30,
+      31
+    ],
+    "reason": [
+      "The condition checks if the sum of three values equals 111, but this is incorrect for identifying valid triplets with distinct colors",
+      "The loop bounds and logic for checking arithmetic progressions are flawed and don't correctly identify all invalid cases",
+      "The algorithm incorrectly assumes that only triplets with values summing to 111 are invalid, missing other valid cases"
+    ]
+  },
+  {
+    "problem": "p02983",
+    "filename": "s437647433.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      10,
+      11,
+      12
+    ],
+    "reason": [
+      "Modulo operation on l and r is incorrect as it doesn't preserve the original range for computation",
+      "Loop bounds are incorrect as they don't properly handle the modulo arithmetic",
+      "The inner loop starts from i+1 but doesn't consider that j can exceed the modulo range"
+    ]
+  },
+  {
+    "problem": "p02659",
+    "filename": "s482212390.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      6,
+      7
+    ],
+    "reason": [
+      "Integer overflow occurs when multiplying large values of c and d, leading to incorrect result",
+      "Incorrect division operation loses precision due to integer division instead of proper truncation"
+    ]
+  },
+  {
+    "problem": "p02761",
+    "filename": "s514963378.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      15,
+      16
+    ],
+    "reason": [
+      "The condition checks ans[0] == 0 after setting it to -1 in the first loop, which will never be true for valid inputs",
+      "The logic for handling the case when n==1 and ans[0]==0 is incorrect because it's checked after the main loop but before the final output, causing wrong output for cases where the first digit constraint is 0"
+    ]
+  },
+  {
+    "problem": "p02732",
+    "filename": "s535670447.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      12,
+      13
+    ],
+    "reason": [
+      "The calculation of combinations uses incorrect formula for choosing 2 elements from x.second elements",
+      "The loop processes all elements in the map including those with zero count after decrement"
+    ]
+  },
+  {
+    "problem": "p02742",
+    "filename": "s680418707.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      13,
+      14,
+      15
+    ],
+    "reason": [
+      "The formula for calculating reachable cells is completely incorrect and does not model the bishop's diagonal movement correctly.",
+      "The code uses incorrect logic to compute the number of cells reachable by a bishop on a grid.",
+      "The approach attempts to use a mathematical formula but fails to account for the actual diagonal reachability pattern of a bishop."
+    ]
+  },
+  {
+    "problem": "p02623",
+    "filename": "s685720839.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      10,
+      11
+    ],
+    "reason": [
+      "Incorrect condition in the loop that leads to wrong book selection logic",
+      "Wrong comparison logic in the loop that causes incorrect book picking from stacks"
+    ]
+  },
+  {
+    "problem": "p02572",
+    "filename": "s685259062.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      17,
+      18
+    ],
+    "reason": [
+      "Variable 'ans' is used without initialization, leading to undefined behavior",
+      "The loop calculates incorrect sum due to uninitialized variable 'ans' and wrong formula for pairwise products"
+    ]
+  },
+  {
+    "problem": "p02629",
+    "filename": "s808921224.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      7,
+      8
+    ],
+    "reason": [
+      "The condition `a <= 0` will never be true because `a` is unsigned, so it can never be negative",
+      "The loop will run indefinitely when `a` becomes 0 due to the incorrect termination condition"
+    ]
+  },
+  {
+    "problem": "p02714",
+    "filename": "s744774182.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      13
+    ],
+    "reason": [
+      "incorrect condition check for triangle inequality leads to wrong count of valid triples"
+    ]
+  },
+  {
+    "problem": "p03163",
+    "filename": "s725336764.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      19,
+      25
+    ],
+    "reason": [
+      "The loop condition uses incorrect bit manipulation for checking which items are included in the subset",
+      "The algorithm attempts to enumerate all 2^N subsets but has a logical error in how it checks which bits are set in the mask"
+    ]
+  },
+  {
+    "problem": "p02718",
+    "filename": "s912061974.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      17,
+      18
+    ],
+    "reason": [
+      "Integer division truncates the fractional part, incorrectly computing the threshold value",
+      "The loop checks if first M elements are >= threshold, but should check if we can select M elements satisfying the condition"
+    ]
+  },
+  {
+    "problem": "p02742",
+    "filename": "s930048589.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      6
+    ],
+    "reason": [
+      "incorrect formula for counting reachable cells by a bishop on a grid"
+    ]
+  },
+  {
+    "problem": "p02742",
+    "filename": "s964398469.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      5
+    ],
+    "reason": [
+      "The formula h*w/2 is incorrect for calculating the number of cells a bishop can reach on a grid"
+    ]
+  },
+  {
+    "problem": "p02743",
+    "filename": "s902354648.cpp",
+    "verdict": "PT",
+    "error_lines": [
+      18
+    ],
+    "reason": [
+      "Direct comparison of square roots can lead to precision errors due to floating-point representation, causing incorrect results for edge cases"
+    ]
+  }
+]

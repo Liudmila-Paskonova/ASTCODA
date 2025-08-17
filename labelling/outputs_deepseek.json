@@ -1,0 +1,50 @@
+[
+    {
+        "problem": "p02696",
+        "filename": "s112877031.cpp",
+        "verdict": "PT",
+        "error_lines": [
+            4,
+            9
+        ],
+        "reason": [
+            "Using floating-point variables for integer inputs causes precision errors.",
+            "Looping up to b is computationally infeasible for large values."
+        ]
+    },
+    {
+        "problem": "p02623",
+        "filename": "s180336410.cpp",
+        "verdict": "PT",
+        "error_lines": [
+            25
+        ],
+        "reason": [
+            "out-of-bounds array access when initializing j to M instead of M-1"
+        ]
+    },
+    {
+        "problem": "p02922",
+        "filename": "s191672447.cpp",
+        "verdict": "PT",
+        "error_lines": [
+            4,
+            6
+        ],
+        "reason": [
+            "initial socket count should be 1, not a",
+            "loop condition incorrectly starts with first =a instead of 1"
+        ]
+    },
+    {
+        "problem": "p02642",
+        "filename": "s295976724.cpp",
+        "verdict": "PT",
+        "error_lines": [
+            13
+        ],
+        "reason": [
+            "Incorrect divisibility check; should be a[i] % a[j] == 0 instead of a[j] % a[j] == 0"
+        ]
+    }
+]
